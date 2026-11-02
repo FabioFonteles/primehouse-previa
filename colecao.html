@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coleção · Prime House — Casas de alto padrão em Belém</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coleção · Prime House — As melhores casas de Belém e Ananindeua</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
 <script src="data.js"></script>
 <div class="pagehead wrap"><div class="eyebrow">Coleção · somente venda</div><h1>Casas à venda</h1></div>
 <section style="padding-top:0"><div class="wrap"><div class="filters">
@@ -9,6 +9,6 @@
 <div class="grid" id="lst"></div><p class="note">Todos os imóveis desta prévia são exemplos ilustrativos.</p></div></section>
 <script src="main.js"></script><script>const fc=document.getElementById("fc");[...new Set(CASAS.flatMap(c=>[c.bairro,c.cond]))].sort().forEach(x=>fc.add(new Option(x,x)));
 function f(){const c=fc.value,v=document.getElementById("fv").value,q=+document.getElementById("fq").value,s=+document.getElementById("fs").value;const[a,b]=v?v.split("-").map(Number):[0,1e13];
-const r=CASAS.filter(x=>(!c||x.cond==c||x.bairro==c)&&x.valor>=a&&x.valor<b&&(!q||x.q>=q)&&(!s||x.s>=s));fadeSwap(document.getElementById("lst"),r.map(card).join("")||"<p>Nenhuma casa com esses critérios. Fale com Fábio: há opções fora do catálogo.</p>")}
+const r=CASAS.filter(x=>(!c||x.cond==c||x.bairro==c)&&x.valor>=a&&x.valor<b&&(!q||x.q>=q)&&(!s||x.s>=s));fadeSwap(document.getElementById("lst"),r.map(card).join("")||"<p>Nenhuma casa com esses critérios. Fale com o corretor: há outras opções disponíveis.</p>")}
 document.querySelectorAll("select").forEach(e=>e.onchange=f);document.getElementById("lst").innerHTML=CASAS.map(card).join("");reveal()</script>
 </body></html>

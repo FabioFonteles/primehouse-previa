@@ -1,18 +1,18 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Casa · Prime House — Casas de alto padrão em Belém</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Casa · Prime House — As melhores casas de Belém e Ananindeua</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
 <script src="data.js"></script>
 <div class="wrap"><div class="gal" id="gal"></div></div>
 <section style="padding-top:70px"><div class="wrap split" style="align-items:start"><div><div class="eyebrow" id="loc"></div><h1 style="font-size:clamp(44px,5vw,76px);margin-top:14px" id="nm"></h1><div class="price" style="font-size:30px" id="pr"></div><p class="note">Imóvel de exemplo — dados e fotos ilustrativos.</p>
-<div class="facts" id="fx"></div><p class="lead" style="font-size:24px" id="ds"></p><a class="btn fill" id="ag" href="#">Agendar visita privativa</a></div>
+<div class="facts" id="fx"></div><p class="lead" style="font-size:24px" id="ds"></p><a class="btn fill" id="ag" href="#">Agendar visita</a></div>
 <div><div class="eyebrow">Diferenciais</div><ul class="lux" style="margin:20px 0 50px"><li>Pé-direito duplo</li><li>Automação residencial</li><li>Energia solar</li><li>Suíte master com closet</li><li>Cozinha gourmet</li><li>Paisagismo assinado</li></ul>
 <div class="eyebrow">Lazer do condomínio</div><ul class="lux" style="margin-top:20px"><li>Segurança 24 horas</li><li>Clube com piscinas</li><li>Quadras de tênis</li><li>Academia</li><li>Trilhas e bosque</li><li>Espaço gourmet</li></ul></div></div></section>
 <div class="lb" id="lb"><button class="nav x" id="lbx" aria-label="Fechar">×</button><button class="nav p" id="lbp" aria-label="Anterior">‹</button><img id="lbi" alt=""><button class="nav n" id="lbn" aria-label="Próxima">›</button></div>
 <script src="main.js"></script><script>const c=CASAS.find(x=>x.id==new URLSearchParams(location.search).get("id"))||CASAS[0];document.title=c.nome+" · Prime House";
 const G=c.img.map(i=>`img/${i}.jpg`);let gi=0;gal.innerHTML=G.slice(0,3).map((u,k)=>`<div class="ph tilt" data-k="${k}"><img src="${u}" alt="${c.nome}, foto ${k+1}"></div>`).join("");initTilt(gal);
-const show=k=>{gi=(k+G.length)%G.length;lbi.style.opacity=0;setTimeout(()=>{lbi.src=G[gi];lbi.style.opacity=1},250)};
+const show=k=>{window.SOM&&SOM.gal();gi=(k+G.length)%G.length;lbi.style.opacity=0;setTimeout(()=>{lbi.src=G[gi];lbi.style.opacity=1},250)};
 gal.querySelectorAll(".ph").forEach(p=>p.onclick=()=>{show(+p.dataset.k);lb.classList.add("on")});
 lbp.onclick=e=>{e.stopPropagation();show(gi-1)};lbn.onclick=e=>{e.stopPropagation();show(gi+1)};lbx.onclick=()=>lb.classList.remove("on");lb.onclick=e=>{if(e.target==lb)lb.classList.remove("on")};
 addEventListener("keydown",e=>{if(!lb.classList.contains("on"))return;if(e.key=="Escape")lb.classList.remove("on");if(e.key=="ArrowLeft")show(gi-1);if(e.key=="ArrowRight")show(gi+1)});
 loc.textContent=c.cond+" · "+c.bairro;nm.textContent=c.nome;pr.textContent=brl(c.valor);ds.textContent=c.desc;
 fx.innerHTML=`<div><b>${c.area}</b><span>m² construídos</span></div><div><b>${c.q}</b><span>quartos</span></div><div><b>${c.s}</b><span>suítes</span></div>`;
-ag.href=wa(`Olá, Fábio! Gostaria de agendar uma visita privativa à ${c.nome}, no ${c.cond} (${c.bairro}), anunciada por ${brl(c.valor)}.`)</script>
+ag.href=wa(`Olá! Gostaria de agendar uma visita à ${c.nome}, no ${c.cond} (${c.bairro}), anunciada por ${brl(c.valor)}.`)</script>
 </body></html>
