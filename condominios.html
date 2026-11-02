@@ -1,0 +1,7 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Condomínios · Prime House — Casas de alto padrão em Belém</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
+<script src="data.js"></script>
+<div class="pagehead wrap"><div class="eyebrow">Endereços</div><h1>Condomínios</h1></div>
+<section style="padding-top:0"><div class="wrap grid" id="cd"></div></section>
+<script src="main.js"></script><script>const L={"Alphaville Belém":"c7","Greenville":"c9","Cidade Jardim":"c3","Montenegro Boulevard":"c4","Lago Azul":"c5","Parque Verde":"c6"};
+cd.innerHTML=Object.entries(L).map(([n,i])=>{const k=CASAS.filter(c=>c.cond==n);return `<div class="card reveal"><div class="ph"><img src="img/${i}.jpg" alt="${n}"></div><h3>${n}</h3><div class="meta">${k[0].bairro} · ${k.length} casa(s) de exemplo na coleção</div></div>`}).join("");reveal()</script>
+</body></html>

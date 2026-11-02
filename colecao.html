@@ -1,0 +1,14 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coleção · Prime House — Casas de alto padrão em Belém</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
+<script src="data.js"></script>
+<div class="pagehead wrap"><div class="eyebrow">Coleção · somente venda</div><h1>Casas à venda</h1></div>
+<section style="padding-top:0"><div class="wrap"><div class="filters">
+<label>Bairro / condomínio<select id="fc"><option value="">Todos</option></select></label>
+<label>Valor<select id="fv"><option value="">Qualquer valor</option><option value="600000-1000000">R$ 600 mil a R$ 1 milhão</option><option value="1000000-2000000">R$ 1 a 2 milhões</option><option value="2000000-4000000">R$ 2 a 4 milhões</option><option value="4000000-1e12">Acima de R$ 4 milhões</option></select></label>
+<label>Quartos<select id="fq"><option value="">Todos</option><option>3</option><option>4</option><option>5</option></select></label>
+<label>Suítes<select id="fs"><option value="">Todas</option><option>3</option><option>4</option><option>5</option></select></label></div>
+<div class="grid" id="lst"></div><p class="note">Todos os imóveis desta prévia são exemplos ilustrativos.</p></div></section>
+<script src="main.js"></script><script>const fc=document.getElementById("fc");[...new Set(CASAS.flatMap(c=>[c.bairro,c.cond]))].sort().forEach(x=>fc.add(new Option(x,x)));
+function f(){const c=fc.value,v=document.getElementById("fv").value,q=+document.getElementById("fq").value,s=+document.getElementById("fs").value;const[a,b]=v?v.split("-").map(Number):[0,1e13];
+const r=CASAS.filter(x=>(!c||x.cond==c||x.bairro==c)&&x.valor>=a&&x.valor<b&&(!q||x.q>=q)&&(!s||x.s>=s));fadeSwap(document.getElementById("lst"),r.map(card).join("")||"<p>Nenhuma casa com esses critérios. Fale com Fábio: há opções fora do catálogo.</p>")}
+document.querySelectorAll("select").forEach(e=>e.onchange=f);document.getElementById("lst").innerHTML=CASAS.map(card).join("");reveal()</script>
+</body></html>
