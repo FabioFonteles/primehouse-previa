@@ -49,6 +49,6 @@ const CONDS=[
  resumo:"Condomínio de chácaras urbanas na Augusto Montenegro, com clube de mais de 20 itens de lazer.",
  lazer:["Piscinas","Academia","Quadra","Playground","Salões","Churrasqueiras","Espaço gourmet","Brinquedoteca"],seg:[],fontes:["Base Empreendimentos (box)","grupostatus.com.br","diariocidade.com"]}];
 let cardC=c=>`<a class="card reveal" href="condominio.html?id=${c.id}"><div class="ph"><img src="img/${c.img}.jpg" alt="${c.nome}" loading="lazy"><span class="ex">Foto ilustrativa</span></div><h3>${c.nome}</h3><div class="meta">${c.local}</div></a>`;
-const FOTOS={"alphaville-belem":7,"greenville":1,"montenegro-boulevard":1,"riviera-green":5,"villa-firenze":6};
+const FOTOS={"alphaville-belem":7,"greenville":1,"montenegro-boulevard":1,"riviera-green":5,"villa-firenze":6,"porto-marina":9};
 CONDS.forEach(c=>{const n=FOTOS[c.id]||0;c.fotos=Array.from({length:n},(_,k)=>`img/condos/${c.id}-${k+1}.webp`);c.capa=c.fotos[0]||`img/${c.img}.jpg`;c.real=n>0});
 cardC=c=>`<a class="card reveal" href="condominio.html?id=${c.id}"><div class="ph"><img src="${c.capa}" alt="${c.nome}, área comum" loading="lazy">${c.real?"":'<span class="ex">Foto ilustrativa</span>'}</div><h3>${c.nome}</h3><div class="meta">${c.local}</div></a>`;
