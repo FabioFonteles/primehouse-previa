@@ -1,12 +1,20 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Condomínio · Prime House — As melhores casas de Belém e Ananindeua</title><meta name="description" content="Prime House: as melhores casas de Belém e Ananindeua. Arquitetura, fino acabamento e qualidade em todos os detalhes."><link rel="stylesheet" href="style.css"></head><body data-solid="1">
 <script src="data.js"></script><script src="condos.js"></script>
-<section class="hero" style="padding:0;height:78vh"><img id="hi" src="" alt=""><div class="wrap"><div class="eyebrow" id="hl"></div><h1 id="hn" style="font-size:clamp(44px,6vw,92px)"></h1><p class="note" style="color:#e8e2d6">Foto ilustrativa</p></div></section>
+<section class="hero" style="padding:0;height:78vh"><img id="hi" src="" alt=""><div class="wrap"><div class="eyebrow" id="hl"></div><h1 id="hn" style="font-size:clamp(44px,6vw,92px)"></h1><p class="note" id="hil" style="color:#e8e2d6">Foto ilustrativa</p></div></section>
 <section><div class="wrap split" style="align-items:start"><div><div class="eyebrow">O condomínio</div><p class="lead" id="hr" style="margin-top:18px"></p><div class="rule"></div><div id="hx"></div><a class="btn fill" id="hw" href="#">Fale com o corretor</a></div>
 <div><div id="hlz"></div><div id="hs" style="margin-top:46px"></div></div></div></section>
+<section id="hgs" style="padding-top:40px"><div class="wrap"><div class="eyebrow">Áreas comuns</div><h2>Lazer e convivência</h2><div class="galc" id="gal"></div></div></section>
+<div class="lb" id="lb"><button class="nav x" id="lbx" aria-label="Fechar">×</button><button class="nav p" id="lbp" aria-label="Anterior">‹</button><img id="lbi" alt=""><button class="nav n" id="lbn" aria-label="Próxima">›</button></div>
 <section class="dark" id="hcs"><div class="wrap"><div class="sec-h"><div><div class="eyebrow">À venda</div><h2>Casas neste condomínio</h2></div></div><div class="grid" id="hc"></div></div></section>
 <section style="padding-top:60px"><div class="wrap"><p class="note" id="hf"></p><a class="btn" href="condominios.html">Ver todos os condomínios</a></div></section>
 <script src="main.js"></script><script>const c=CONDS.find(x=>x.id==new URLSearchParams(location.search).get("id"))||CONDS[0];document.title=c.nome+" · Conheça os condomínios · Prime House";
-hi.src=`img/${c.img}.jpg`;hi.alt=c.nome;hl.textContent=c.cidade;hn.textContent=c.nome;hr.textContent=c.resumo;
+hi.src=c.capa;if(c.real)hil.remove();
+const G=c.fotos;let gi=0;if(!G.length)hgs.remove();else{gal.innerHTML=G.map((u,k)=>`<div class="ph tilt reveal" data-k="${k}"><img src="${u}" alt="${c.nome}, área comum ${k+1}" loading="lazy"></div>`).join("");typeof initTilt=="function"&&initTilt(gal);
+const show=k=>{window.SOM&&SOM.gal();gi=(k+G.length)%G.length;lbi.style.opacity=0;setTimeout(()=>{lbi.src=G[gi];lbi.style.opacity=1},250)};
+gal.querySelectorAll(".ph").forEach(p=>p.onclick=()=>{show(+p.dataset.k);lb.classList.add("on")});
+lbp.onclick=e=>{e.stopPropagation();show(gi-1)};lbn.onclick=e=>{e.stopPropagation();show(gi+1)};lbx.onclick=()=>lb.classList.remove("on");lb.onclick=e=>{if(e.target==lb)lb.classList.remove("on")};
+addEventListener("keydown",e=>{if(!lb.classList.contains("on"))return;if(e.key=="Escape")lb.classList.remove("on");if(e.key=="ArrowLeft")show(gi-1);if(e.key=="ArrowRight")show(gi+1)});}
+hi.alt=c.nome;hl.textContent=c.cidade;hn.textContent=c.nome;hr.textContent=c.resumo;
 const li=(t,a)=>a&&a.length?`<div class="eyebrow">${t}</div><ul class="lux" style="margin-top:18px">${a.map(x=>`<li>${x}</li>`).join("")}</ul>`:"";
 hx.innerHTML=[["Localização",c.local],["Construtora",c.construtora],["Tamanho",c.tamanho]].filter(x=>x[1]).map(([k,v])=>`<p style="margin-bottom:14px"><span class="eyebrow">${k}</span><br>${v}</p>`).join("");
 hlz.innerHTML=li("Lazer",c.lazer);hs.innerHTML=li("Segurança",c.seg);

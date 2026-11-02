@@ -3,12 +3,14 @@
 <div class="pagehead wrap"><div class="eyebrow">Coleção · somente venda</div><h1>Casas à venda</h1></div>
 <section style="padding-top:0"><div class="wrap"><div class="filters">
 <label>Bairro / condomínio<select id="fc"><option value="">Todos</option></select></label>
-<label>Valor<select id="fv"><option value="">Qualquer valor</option><option value="600000-1000000">R$ 600 mil a R$ 1 milhão</option><option value="1000000-2000000">R$ 1 a 2 milhões</option><option value="2000000-4000000">R$ 2 a 4 milhões</option><option value="4000000-1e12">Acima de R$ 4 milhões</option></select></label>
-<label>Quartos<select id="fq"><option value="">Todos</option><option>3</option><option>4</option><option>5</option></select></label>
-<label>Suítes<select id="fs"><option value="">Todas</option><option>3</option><option>4</option><option>5</option></select></label></div>
-<div class="grid" id="lst"></div><p class="note">Todos os imóveis desta prévia são exemplos ilustrativos.</p></div></section>
+<label>Valor<select id="fv"><option value="">Qualquer valor</option><option value="0-800000">Até R$ 800 mil</option><option value="800000-1000001">R$ 800 mil a R$ 1 milhão</option><option value="1000001-1500001">R$ 1 a 1,5 milhão</option><option value="1500001-3000001">R$ 1,5 a 3 milhões</option><option value="3000001-1e12">Acima de R$ 3 milhões</option></select></label>
+<label>Quartos<select id="fq"><option value="">Todos</option><option value="2">2 ou mais</option><option value="3">3 ou mais</option><option value="4">4 ou mais</option><option value="5">5 ou mais</option></select></label>
+<label>Suítes<select id="fs"><option value="">Todas</option><option value="1">1 ou mais</option><option value="2">2 ou mais</option><option value="3">3 ou mais</option><option value="4">4 ou mais</option></select></label></div>
+<div class="grid" id="lst"></div><p class="note" id="cnt"></p><div style="text-align:center;margin-top:30px"><button class="btn" id="mais">Carregar mais casas</button></div></div></section>
 <script src="main.js"></script><script>const fc=document.getElementById("fc");[...new Set(CASAS.flatMap(c=>[c.bairro,c.cond]))].sort().forEach(x=>fc.add(new Option(x,x)));
 function f(){const c=fc.value,v=document.getElementById("fv").value,q=+document.getElementById("fq").value,s=+document.getElementById("fs").value;const[a,b]=v?v.split("-").map(Number):[0,1e13];
-const r=CASAS.filter(x=>(!c||x.cond==c||x.bairro==c)&&x.valor>=a&&x.valor<b&&(!q||x.q>=q)&&(!s||x.s>=s));fadeSwap(document.getElementById("lst"),r.map(card).join("")||"<p>Nenhuma casa com esses critérios. Fale com o corretor: há outras opções disponíveis.</p>")}
-document.querySelectorAll("select").forEach(e=>e.onchange=f);document.getElementById("lst").innerHTML=CASAS.map(card).join("");reveal()</script>
+const r=CASAS.filter(x=>(!c||x.cond==c||x.bairro==c)&&x.valor>=a&&x.valor<b&&(!q||x.q>=q)&&(!s||x.s>=s));R=r;N=12;fadeSwap(document.getElementById("lst"),r.slice(0,N).map(card).join("")||"<p>Nenhuma casa com esses critérios. Fale com o corretor: há outras opções disponíveis.</p>");up()}
+let R=CASAS,N=12;const up=()=>{cnt.textContent=R.length?`Mostrando ${Math.min(N,R.length)} de ${R.length} casas`:"";mais.style.display=N<R.length?"":"none"};
+mais.onclick=()=>{const l=document.getElementById("lst");l.insertAdjacentHTML("beforeend",R.slice(N,N+12).map(card).join(""));N+=12;up();reveal()};
+document.querySelectorAll("select").forEach(e=>e.onchange=f);document.getElementById("lst").innerHTML=CASAS.slice(0,N).map(card).join("");up();reveal()</script>
 </body></html>
