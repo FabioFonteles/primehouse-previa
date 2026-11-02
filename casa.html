@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Casa · Prime House — As melhores casas de Belém e Ananindeua</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
-<script src="data.js"></script>
+<script src="data.js"></script><script src="condos.js"></script>
 <div class="wrap"><div class="gal" id="gal"></div></div>
 <section style="padding-top:70px"><div class="wrap split" style="align-items:start"><div><div class="eyebrow" id="loc"></div><h1 style="font-size:clamp(44px,5vw,76px);margin-top:14px" id="nm"></h1><div class="price" style="font-size:30px" id="pr"></div><p class="note">Imóvel de exemplo — dados e fotos ilustrativos.</p>
 <div class="facts" id="fx"></div><p class="lead" style="font-size:24px" id="ds"></p><a class="btn fill" id="ag" href="#">Agendar visita</a></div>
@@ -12,7 +12,7 @@ const show=k=>{window.SOM&&SOM.gal();gi=(k+G.length)%G.length;lbi.style.opacity=
 gal.querySelectorAll(".ph").forEach(p=>p.onclick=()=>{show(+p.dataset.k);lb.classList.add("on")});
 lbp.onclick=e=>{e.stopPropagation();show(gi-1)};lbn.onclick=e=>{e.stopPropagation();show(gi+1)};lbx.onclick=()=>lb.classList.remove("on");lb.onclick=e=>{if(e.target==lb)lb.classList.remove("on")};
 addEventListener("keydown",e=>{if(!lb.classList.contains("on"))return;if(e.key=="Escape")lb.classList.remove("on");if(e.key=="ArrowLeft")show(gi-1);if(e.key=="ArrowRight")show(gi+1)});
-loc.textContent=c.cond+" · "+c.bairro;nm.textContent=c.nome;pr.textContent=brl(c.valor);ds.textContent=c.desc;
+loc.innerHTML=`<a href="condominio.html?id=${c.cid}" style="border-bottom:1px solid var(--au)">${c.cond}</a> · ${c.bairro}`;nm.textContent=c.nome;pr.textContent=brl(c.valor);ds.textContent=c.desc;
 fx.innerHTML=`<div><b>${c.area}</b><span>m² construídos</span></div><div><b>${c.q}</b><span>quartos</span></div><div><b>${c.s}</b><span>suítes</span></div>`;
 ag.href=wa(`Olá! Gostaria de agendar uma visita à ${c.nome}, no ${c.cond} (${c.bairro}), anunciada por ${brl(c.valor)}.`)</script>
 </body></html>

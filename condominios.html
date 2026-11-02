@@ -1,7 +1,6 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Condomínios · Prime House — As melhores casas de Belém e Ananindeua</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
-<script src="data.js"></script>
-<div class="pagehead wrap"><div class="eyebrow">Endereços</div><h1>Condomínios</h1></div>
-<section style="padding-top:0"><div class="wrap grid" id="cd"></div></section>
-<script src="main.js"></script><script>const L={"Alphaville Belém":"c7","Greenville":"c9","Cidade Jardim":"c3","Montenegro Boulevard":"c4","Lago Azul":"c5","Parque Verde":"c6"};
-cd.innerHTML=Object.entries(L).map(([n,i])=>{const k=CASAS.filter(c=>c.cond==n);return `<div class="card reveal"><div class="ph"><img src="img/${i}.jpg" alt="${n}"></div><h3>${n}</h3><div class="meta">${k[0].bairro} · ${k.length} casa(s) de exemplo na coleção</div></div>`}).join("");reveal()</script>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Conheça os condomínios · Prime House — As melhores casas de Belém e Ananindeua</title><meta name="description" content="Prime House: as melhores casas de Belém e Ananindeua. Arquitetura, fino acabamento e qualidade em todos os detalhes."><link rel="stylesheet" href="style.css"></head><body data-solid="1">
+<script src="data.js"></script><script src="condos.js"></script>
+<div class="pagehead wrap"><div class="eyebrow">Belém · Ananindeua · Augusto Montenegro · BR-316</div><h1>Conheça os condomínios</h1><p style="max-width:640px;margin-top:20px">Os condomínios fechados de casas mais desejados da região: localização, lazer, segurança e as casas à venda em cada um.</p></div>
+<section style="padding-top:0"><div class="wrap"><div class="filters"><label>Cidade<select id="fcid"><option value="">Todas</option><option>Belém</option><option>Ananindeua</option></select></label></div><div class="grid" id="cd"></div><p class="note">Fotos ilustrativas, não são dos condomínios. Informações reunidas de fontes públicas; confirme com o corretor.</p></div></section>
+<script src="main.js"></script><script>const R=()=>{const v=fcid.value;fadeSwap(cd,CONDS.filter(c=>!v||c.cidade==v).map(cardC).join(""))};fcid.onchange=R;cd.innerHTML=CONDS.map(cardC).join("");reveal()</script>
 </body></html>
