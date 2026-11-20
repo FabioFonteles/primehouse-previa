@@ -13,6 +13,6 @@ gal.querySelectorAll(".ph").forEach(p=>p.onclick=()=>{show(+p.dataset.k);lb.clas
 lbp.onclick=e=>{e.stopPropagation();show(gi-1)};lbn.onclick=e=>{e.stopPropagation();show(gi+1)};lbx.onclick=()=>lb.classList.remove("on");lb.onclick=e=>{if(e.target==lb)lb.classList.remove("on")};
 addEventListener("keydown",e=>{if(!lb.classList.contains("on"))return;if(e.key=="Escape")lb.classList.remove("on");if(e.key=="ArrowLeft")show(gi-1);if(e.key=="ArrowRight")show(gi+1)});
 loc.innerHTML=(c.cid?`<a href="condominio.html?id=${c.cid}" style="border-bottom:1px solid var(--au)">${c.cond}</a> · `:(c.cond!=c.bairro?c.cond+" · ":""))+c.bairro+", "+c.cidade;nm.textContent=c.nome;pr.textContent=brl(c.valor);ds.textContent=c.desc;
-fx.innerHTML=`<div><b>${c.area}</b><span>m² construídos</span></div><div><b>${c.q}</b><span>quartos</span></div><div><b>${c.s}</b><span>suítes</span></div>`;
+fx.innerHTML=`${c.area?`<div><b>${c.area}</b><span>m² construídos</span></div>`:`<div><b>${c.vagas}</b><span>vagas</span></div>`}<div><b>${c.q}</b><span>quartos</span></div><div><b>${c.s}</b><span>suítes</span></div>`;
 ag.href=wa(`Olá! Gostaria de agendar uma visita à ${c.nome}, no ${c.cond} (${c.bairro}), anunciada por ${brl(c.valor)}.`)</script>
 </body></html>
