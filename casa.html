@@ -1,18 +1,24 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Casa · Prime House — As melhores casas de Belém e Ananindeua</title><link rel="stylesheet" href="style.css"></head><body data-solid="1">
-<script src="data.js"></script><script src="condos.js"></script>
-<div class="wrap"><div class="gal" id="gal"></div></div>
-<section style="padding-top:70px"><div class="wrap split" style="align-items:start"><div><div class="eyebrow" id="loc"></div><h1 style="font-size:clamp(44px,5vw,76px);margin-top:14px" id="nm"></h1><div class="price" style="font-size:30px" id="pr"></div><p class="note">Imóvel de exemplo — dados e fotos ilustrativos.</p>
-<div class="facts" id="fx"></div><p class="lead" style="font-size:24px" id="ds"></p><a class="btn fill" id="ag" href="#">Agendar visita</a></div>
-<div><div class="eyebrow">Diferenciais</div><ul class="lux" style="margin:20px 0 50px"><li>Pé-direito duplo</li><li>Automação residencial</li><li>Energia solar</li><li>Suíte master com closet</li><li>Cozinha gourmet</li><li>Paisagismo assinado</li></ul>
-<div class="eyebrow">Lazer do condomínio</div><ul class="lux" style="margin-top:20px"><li>Segurança 24 horas</li><li>Clube com piscinas</li><li>Quadras de tênis</li><li>Academia</li><li>Trilhas e bosque</li><li>Espaço gourmet</li></ul></div></div></section>
-<div class="lb" id="lb"><button class="nav x" id="lbx" aria-label="Fechar">×</button><button class="nav p" id="lbp" aria-label="Anterior">‹</button><img id="lbi" alt=""><button class="nav n" id="lbn" aria-label="Próxima">›</button></div>
-<script src="main.js"></script><script>const c=CASAS.find(x=>x.id==new URLSearchParams(location.search).get("id"))||CASAS[0];document.title=c.nome+" · Prime House";
-const G=c.img;let gi=0;gal.innerHTML=G.slice(0,3).map((u,k)=>`<div class="ph tilt" data-k="${k}"><img src="${u}" alt="${c.nome}, foto ${k+1}"></div>`).join("");initTilt(gal);
-const show=k=>{window.SOM&&SOM.gal();gi=(k+G.length)%G.length;lbi.style.opacity=0;setTimeout(()=>{lbi.src=G[gi];lbi.style.opacity=1},250)};
-gal.querySelectorAll(".ph").forEach(p=>p.onclick=()=>{show(+p.dataset.k);lb.classList.add("on")});
-lbp.onclick=e=>{e.stopPropagation();show(gi-1)};lbn.onclick=e=>{e.stopPropagation();show(gi+1)};lbx.onclick=()=>lb.classList.remove("on");lb.onclick=e=>{if(e.target==lb)lb.classList.remove("on")};
-addEventListener("keydown",e=>{if(!lb.classList.contains("on"))return;if(e.key=="Escape")lb.classList.remove("on");if(e.key=="ArrowLeft")show(gi-1);if(e.key=="ArrowRight")show(gi+1)});
-loc.innerHTML=(c.cid?`<a href="condominio.html?id=${c.cid}" style="border-bottom:1px solid var(--au)">${c.cond}</a> · `:(c.cond!=c.bairro?c.cond+" · ":""))+c.bairro+", "+c.cidade;nm.textContent=c.nome;pr.textContent=brl(c.valor);ds.textContent=c.desc;
-fx.innerHTML=`${c.area?`<div><b>${c.area}</b><span>m² construídos</span></div>`:`<div><b>${c.vagas}</b><span>vagas</span></div>`}<div><b>${c.q}</b><span>quartos</span></div><div><b>${c.s}</b><span>suítes</span></div>`;
-ag.href=wa(`Olá! Gostaria de agendar uma visita à ${c.nome}, no ${c.cond} (${c.bairro}), anunciada por ${brl(c.valor)}.`)</script>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Prime House - Belém Ananindeua</title><meta name="description" content="Casas em condomínios fechados em Belém, Ananindeua e Marituba."><link rel="icon" href="favicon.svg"><link rel="stylesheet" href="style.css"></head><body>
+<script src="data.js"></script><script src="condos.js"></script><script src="site.js"></script>
+<main class="wrap detail" id="det"></main>
+<script>
+(()=>{const {I,esc,brl,m2,wa,houses}=PH;const id=new URLSearchParams(location.search).get('id');const c=houses().find(h=>h.id===id);const el=document.getElementById('det');
+if(!c){el.innerHTML='<a class="text-link" href="index.html#casas">Voltar às casas</a><div class="empty" style="margin-top:30px">Esta casa não está mais disponível. <a class="text-link" href="index.html#casas">Ver as casas</a></div>';return}
+document.title=`Casa no ${c.cond} · ${brl(c.valor)} · Prime House - Belém Ananindeua`;
+const url=location.href.split('#')[0];
+const msg=`Olá, Fábio! Gostaria de perguntar sobre este imóvel:\nCasa no ${c.cond}, em ${c.cidade}.\n${c.q} quartos${c.area?` · ${m2(c.area)} m² de construção`:''} · ${brl(c.valor)}.\n${url}`;
+const msg2=`Olá, Fábio! Tenho interesse nesta casa:\nCasa no ${c.cond}, em ${c.cidade}.\n${c.q} quartos${c.area?` · ${m2(c.area)} m² de construção`:''} · ${brl(c.valor)}.\n${url}`;
+const stats=[c.area&&[m2(c.area)+' m²','Construção'],[c.q,'Quartos'],[c.s,'Suítes privativas'],[c.vagas,'Vagas cobertas']].filter(Boolean);
+const dif=(c.dif||[]).map(d=>d.charAt(0).toUpperCase()+d.slice(1));
+el.innerHTML=`<a class="text-link" href="index.html#casas">Voltar às casas</a><div class="detail-top"><div><div class="eyebrow">${esc(c.cidade)}${c.bairro&&c.bairro!=='Centro'?' · '+esc(c.bairro):''}</div><h1 style="font-size:clamp(34px,4vw,56px)">Casa no ${esc(c.cond)}</h1></div><div class="price">${brl(c.valor)}</div></div>
+<img class="detail-photo" id="ph" src="${esc(c.img[0])}" alt="Casa no ${esc(c.cond)}, foto 1">
+<div class="thumbs" id="th">${c.img.map((s,i)=>`<button type="button" class="${i?'':'active'}" aria-label="Ver foto ${i+1}" data-i="${i}"><img src="${esc(s)}" alt="" loading="lazy"></button>`).join('')}</div>
+<div class="detail-layout"><div><h2>Espaço para viver bem.</h2><div class="stats" style="--n:${stats.length}">${stats.map(s=>`<div class="stat"><strong>${s[0]}</strong><small>${s[1]}</small></div>`).join('')}</div><p>${esc(c.desc)}</p>${dif.length?`<h3>Diferenciais da casa</h3><ul>${dif.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>`:''}<p>Valores e disponibilidade sujeitos à confirmação no atendimento.</p></div>
+<aside class="contact-box"><div class="eyebrow">ATENDIMENTO PRIME HOUSE</div><h3>Vamos conhecer esta casa?</h3><p>Fale com Fábio Fonteles e combine sua visita.</p><a class="btn" href="${wa(msg)}" target="_blank" rel="noreferrer">${I.msg} Pergunte ao corretor sobre esse imóvel</a><a class="btn secondary" href="${wa(msg2)}" target="_blank" rel="noreferrer">${I.heart} Tenho interesse nesta casa</a><p style="font-size:13px">CRECI 9493 · Exija o CRECI</p></aside></div>`;
+const ph=document.getElementById('ph'),bs=[...document.querySelectorAll('#th button')];let cur=0;
+const show=i=>{cur=(i+c.img.length)%c.img.length;ph.classList.add('fade');setTimeout(()=>{ph.src=c.img[cur];ph.alt=`Casa no ${c.cond}, foto ${cur+1}`;ph.classList.remove('fade')},150);bs.forEach((b,k)=>b.classList.toggle('active',k===cur));bs[cur].scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'})};
+bs.forEach(b=>b.onclick=()=>show(+b.dataset.i));ph.onclick=()=>show(cur+1);
+document.addEventListener('keydown',e=>{if(document.getElementById('reg').classList.contains('on'))return;if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});
+})();
+</script>
 </body></html>
