@@ -25,7 +25,7 @@ const run=()=>{const c=$('f-cond').value,p=+$('f-preco').value||Infinity,q=+$('f
  $('count').textContent=`${r.length} ${r.length===1?'imóvel':'imóveis'} na seleção`};
 document.querySelectorAll('#filtros select').forEach(s=>s.addEventListener('change',run));
 $('f-go').onclick=()=>{run();$('casas').scrollIntoView({behavior:'smooth'})};run();
-$('condos').innerHTML=condList().slice(0,3).map(condoHTML).join('');
+$('condos').innerHTML=condList().map(c=>condoHTML(c)).join('');
 // Busca personalizada: compara o texto com o catálogo (no próprio navegador)
 const norm=t=>t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 $('q-form').addEventListener('submit',e=>{e.preventDefault();const raw=$('query').value.trim(),t=norm(raw);

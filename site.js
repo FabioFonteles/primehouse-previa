@@ -47,12 +47,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 // ---------- utilitários de dados ----------
 const houses=()=>(typeof CASAS!=='undefined'?CASAS:[]);
 const condName=c=>c.cond;
-const condList=()=>{const base=(typeof CONDS!=='undefined'?CONDS:[]).map(c=>({...c,_houses:houses().filter(h=>h.cid===c.id)}));
- const ids=new Set(base.map(c=>c.id));const extra={};
- houses().filter(h=>!ids.has(h.cid)).forEach(h=>{const k=h.cond;(extra[k]=extra[k]||{id:null,nome:h.cond,cidade:h.cidade,resumo:'',_houses:[]})._houses.push(h)});
- return [...base,...Object.values(extra)].sort((a,b)=>b._houses.length-a._houses.length||a.nome.localeCompare(b.nome,'pt-BR'))};
 const cardHTML=c=>`<article class="card"><a class="card-media" href="casa.html?id=${encodeURIComponent(c.id)}"><img src="${esc(c.img[0])}" alt="Fachada da casa no ${esc(c.cond)}" loading="lazy"><span class="tag">${esc(c.cond)}</span></a><div class="card-body"><div class="location">${esc(c.cidade)}${c.bairro&&c.bairro!=='Centro'?' · '+esc(c.bairro):''}</div><h3>${esc(c.cond)} · ${c.q} quartos</h3><div class="specs">${c.area?`<span>${I.area}${m2(c.area)} m²</span>`:''}<span>${I.bed}${suites(c)}</span><span>${I.car}${vagas(c)}</span></div><div class="card-bottom"><div class="price">${brl(c.valor)}</div><a href="casa.html?id=${encodeURIComponent(c.id)}" class="text-link">Conhecer a casa</a></div></div></article>`;
-const condoHTML=c=>{const n=c._houses.length,cn=n?c._houses[0].cond:c.nome;const title=c.id?`<a href="condominio.html?id=${c.id}">${esc(c.nome)}</a>`:esc(c.nome);
- return `<article class="condo"><div class="location">${esc(c.cidade)}</div><h3>${title}</h3><p>${esc(c.resumo||(n?`Casas à venda no ${c.nome}, em ${c.cidade}.`:'Registre seu interesse para receber atendimento e buscar uma casa neste condomínio.'))}</p>${n?`<a class="btn secondary" href="index.html?condominio=${encodeURIComponent(cn)}#casas">Casas disponíveis aqui · ${n}</a>`:`<p>Sem casas no nosso catálogo no momento.</p><a class="btn secondary" href="${wa(`Olá! Quero uma casa no condomínio ${c.nome}.`)}" target="_blank" rel="noreferrer">Quero uma casa aqui</a>`}${c.resumo?'<p style="font-size:12px">Informações do material dos imóveis.</p>':''}</article>`};
-window.PH={vagas,wa,I,esc,brl,m2,suites,cardHTML,condoHTML,condList,houses};
+const condList=()=>{const H=houses();const used=new Set();
+ const base=(typeof CONDS!=='undefined'?CONDS:[]).map(c=>{const hs=H.filter(h=>(c.casas||[]).includes(h.cond)).sort((a,b)=>a.valor-b.valor);hs.forEach(h=>used.add(h.id));return {...c,_houses:hs}});
+ const extra={};H.filter(h=>!used.has(h.id)).forEach(h=>{(extra[h.cond]=extra[h.cond]||{id:null,nome:h.cond,cidade:h.cidade,bairro:h.bairro,resumo:'',_houses:[]})._houses.push(h)});
+ const ord={'Belém':0,'Ananindeua':1,'Marituba':2};
+ return [...base,...Object.values(extra)].sort((a,b)=>(b._houses.length>0)-(a._houses.length>0)||(ord[a.cidade]??9)-(ord[b.cidade]??9)||b._houses.length-a._houses.length||a.nome.localeCompare(b.nome,'pt-BR'))};
+const houseLine=h=>{const d=String(h.nome||'').split(' · ').slice(1).join(' · ')||`casa de ${h.q} quartos`;return `<li><a href="casa.html?id=${encodeURIComponent(h.id)}"><span>${esc(h.cond)} · ${esc(d)}</span><strong>${brl(h.valor)}</strong></a></li>`};
+const condoHTML=(c,full)=>{const n=c._houses.length,cn=n?c._houses[0].cond:c.nome,lim=full?n:4;const title=c.id?`<a href="condominio.html?id=${c.id}">${esc(c.nome)}</a>`:esc(c.nome);
+ const list=n?`<div class="condo-houses-t">Casas disponíveis aqui · ${n}</div><ul class="condo-houses">${c._houses.slice(0,lim).map(houseLine).join('')}</ul>${n>lim?`<a class="text-link" href="condominio.html?id=${c.id}">Ver as ${n} casas</a>`:''}`:`<p>Sem casas no nosso catálogo no momento.</p><a class="btn secondary" href="${wa(`Olá! Quero uma casa no condomínio ${c.nome}.`)}" target="_blank" rel="noreferrer">Quero uma casa aqui</a>`;
+ return `<article class="condo"><div class="location">${esc(c.cidade)}${c.bairro?' · '+esc(c.bairro):''}</div><h3>${title}</h3><p>${esc(c.resumo||'Registre seu interesse para receber atendimento e buscar uma casa neste condomínio.')}</p>${list}<div class="condo-links">${c.maps?`<a class="text-link" href="${c.maps}" target="_blank" rel="noreferrer">Ver no Google Maps</a>`:''}${c.id?`<a class="text-link" href="condominio.html?id=${c.id}">Conhecer o condomínio</a>`:''}</div>${c.resumo?'<p style="font-size:12px">Informações do material dos imóveis.</p>':''}</article>`};
+window.PH={houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,condoHTML,condList,houses};
 })();
