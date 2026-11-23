@@ -15,7 +15,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const brl=v=>'R$ '+Number(v).toLocaleString('pt-BR',{maximumFractionDigits:0});
 const m2=a=>String(a).replace('.',',');
 const suites=c=>`${c.s} suíte${c.s>1?'s':''}`;const vagas=c=>`${c.vagas} vaga${c.vagas>1?'s':''}`;
-const logo=(extra='')=>`<a class="brand brand-image ${extra}" href="index.html" aria-label="Prime House — página inicial"><img src="img/prime-house-logo.webp" alt="Prime House — Casas Belém Ananindeua" width="768" height="512"></a>`;
+const logo=(extra='')=>`<a class="brand brand-image ${extra}" href="index.html" aria-label="Prime House — página inicial"><img src="img/logo-prime-house.png" alt="Prime House" width="1345" height="262"></a>`;
 
 // ---------- cabeçalho, rodapé, WhatsApp flutuante ----------
 const header=`<header class="wrap"><div class="nav">${logo()}<nav><a href="index.html#casas">Encontre sua casa</a><a href="condominios.html">Conheça os condomínios</a><a href="index.html#busca">Busca personalizada</a></nav><a class="btn secondary" href="${wa('Olá, procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">${I.msg} Fale com o corretor</a></div></header>`;
