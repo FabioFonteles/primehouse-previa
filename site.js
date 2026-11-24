@@ -15,12 +15,52 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const brl=v=>'R$ '+Number(v).toLocaleString('pt-BR',{maximumFractionDigits:0});
 const m2=a=>String(a).replace('.',',');
 const suites=c=>`${c.s} suíte${c.s>1?'s':''}`;const vagas=c=>`${c.vagas} vaga${c.vagas>1?'s':''}`;
-const logo=(extra='')=>`<a class="brand brand-image ${extra}" href="index.html" aria-label="Prime House — página inicial"><img src="img/logo-prime-house.png" alt="Prime House" width="1345" height="262"></a>`;
+const logo=(extra='')=>`<a class="brand brand-image ${extra}" href="index.html" aria-label="Prime House — página inicial"><img src="img/logo-prime-house-letreiro.png" alt="Prime House" width="1202" height="121"></a>`;
 
 // ---------- cabeçalho, rodapé, WhatsApp flutuante ----------
-const header=`<header class="wrap"><div class="nav">${logo()}<nav><a href="index.html#casas">Encontre sua casa</a><a href="condominios.html">Conheça os condomínios</a><a href="index.html#busca">Busca personalizada</a></nav><a class="btn secondary" href="${wa('Olá, procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">${I.msg} Fale com o corretor</a></div></header>`;
-const footer=`<footer class="footer"><div class="wrap footer-inner">${logo('footer-brand')}<div>Fale com o corretor · CRECI 9493<br>WhatsApp <a href="${wa('Olá! Procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">(91) 98010-1026</a><br>Exija o CRECI</div><div>Belém · Ananindeua · Marituba<br><a href="privacidade.html">Privacidade</a><br><button type="button" data-cadastro style="background:none;border:0;padding:0;font-size:13px;color:inherit">Meu cadastro</button></div></div></footer><a class="floating-whatsapp" href="${wa('Olá! Procuro uma casa em condomínio fechado.')}" target="_blank" rel="noopener noreferrer" aria-label="Fale com o corretor pelo WhatsApp" title="Fale com o corretor no WhatsApp">${I.waLogo}</a>`;
+const header=`<header class="site-header"><div class="wrap header-inner"><div class="header-brand-row">${logo()}<button class="nav-toggle" type="button" aria-label="Abrir menu" aria-controls="site-nav" aria-expanded="false"><span></span><span></span><span></span></button></div><div class="header-rule" aria-hidden="true"></div><nav id="site-nav" class="site-nav"><a href="index.html#casas">Encontre sua casa</a><a href="condominios.html">Conheça os condomínios</a><a href="index.html#busca">Busca personalizada</a><a class="nav-cta" href="${wa('Olá, procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">Fale com o corretor</a></nav></div></header>`;
+const footer=`<footer class="footer"><div class="wrap footer-inner">${logo('footer-brand')}<div class="footer-meta"><div>Fale com o corretor · CRECI 9493<br>WhatsApp <a href="${wa('Olá! Procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">(91) 98010-1026</a><br>Exija o CRECI</div><div>Belém · Ananindeua · Marituba<br><a href="privacidade.html">Privacidade</a> · <button type="button" data-cadastro class="footer-cadastro">Meu cadastro</button></div></div></div></footer><a class="floating-whatsapp" href="${wa('Olá! Procuro uma casa em condomínio fechado.')}" target="_blank" rel="noopener noreferrer" aria-label="Fale com o corretor pelo WhatsApp" title="Fale com o corretor no WhatsApp">${I.waLogo}</a>`;
 document.body.insertAdjacentHTML('afterbegin',header);
+(function(){
+ const hdr=document.querySelector('.site-header');
+ const tog=document.querySelector('.nav-toggle');
+ const nav=document.getElementById('site-nav');
+ const setOpen=on=>{
+  hdr.classList.toggle('is-open',on);
+  tog.setAttribute('aria-expanded',on?'true':'false');
+  tog.setAttribute('aria-label',on?'Fechar menu':'Abrir menu');
+ };
+ tog.addEventListener('click',()=>setOpen(!hdr.classList.contains('is-open')));
+ nav.addEventListener('click',e=>{if(e.target.closest('a'))setOpen(false)});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false)});
+ window.addEventListener('resize',()=>{if(window.matchMedia('(min-width:801px)').matches)setOpen(false)});
+ let compact=false;
+ const onScroll=()=>{
+  const y=window.scrollY||0;
+  const next=compact?y>16:y>56;
+  if(next!==compact){compact=next;hdr.classList.toggle('is-compact',compact)}
+ };
+ onScroll();
+ window.addEventListener('scroll',onScroll,{passive:true});
+ const mark=()=>{
+  const path=(location.pathname.split('/').pop()||'index.html');
+  const hash=location.hash;
+  nav.querySelectorAll('a[href]').forEach(a=>{
+   if(a.classList.contains('nav-cta'))return;
+   const href=a.getAttribute('href')||'';
+   let on=false;
+   if(path==='condominios.html'||path==='condominio.html') on=href.indexOf('condominios.html')!==-1;
+   else if(path==='casa.html') on=href.indexOf('#casas')!==-1;
+   else if(path==='index.html'||path===''){
+    if(hash==='#busca') on=href.indexOf('#busca')!==-1;
+    else on=href.indexOf('#casas')!==-1;
+   }
+   if(on)a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+  });
+ };
+ mark();
+ window.addEventListener('hashchange',mark);
+})();
 
 
 const ready=()=>{document.body.insertAdjacentHTML('beforeend',footer);
