@@ -126,12 +126,12 @@ to{opacity:1;filter:none;text-shadow:none}
 /* ---- cabeçalho e rodapé: logomarca centralizada ---- */
 .site-header-slot{display:block;width:100%}
 .site-header{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--background);border-bottom:1px solid #cfb68133}
-.header-inner{display:flex;flex-direction:column;align-items:center;padding:36px 0 26px;position:relative}
+.header-inner{display:flex;flex-direction:column;align-items:center;padding:36px 0 26px;position:relative;transition:padding .85s cubic-bezier(.22,1,.36,1),gap .85s cubic-bezier(.22,1,.36,1)}
 .header-brand-row{position:relative;width:100%;display:flex;justify-content:center;align-items:center}
-.brand-image{letter-spacing:normal;line-height:0;display:block;width:440px;max-width:68vw;transition:width .3s ease,max-width .3s ease}
+.brand-image{letter-spacing:normal;line-height:0;display:block;width:440px;max-width:68vw;transition:width .85s cubic-bezier(.22,1,.36,1),max-width .85s cubic-bezier(.22,1,.36,1)}
 .brand-image img{width:100%;height:auto;display:block}
-.header-rule{width:112px;height:1px;background:var(--gold);margin:24px 0 0;opacity:.9;flex:0 0 auto}
-.site-nav{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:0 2.35em;margin-top:20px;font-size:13px;letter-spacing:.15em;text-transform:uppercase}
+.header-rule{width:112px;height:1px;background:var(--gold);margin:24px 0 0;opacity:.9;flex:0 0 auto;overflow:hidden;transition:opacity .85s cubic-bezier(.22,1,.36,1),margin .85s cubic-bezier(.22,1,.36,1),width .85s cubic-bezier(.22,1,.36,1),height .85s cubic-bezier(.22,1,.36,1)}
+.site-nav{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:0 2.35em;margin-top:20px;font-size:13px;letter-spacing:.15em;text-transform:uppercase;transition:margin .85s cubic-bezier(.22,1,.36,1),gap .85s cubic-bezier(.22,1,.36,1),font-size .85s cubic-bezier(.22,1,.36,1),letter-spacing .85s cubic-bezier(.22,1,.36,1)}
 /* Capa inicial: letreiro maior e mais respiro acima e abaixo do nome */
 .page-home .header-inner{padding:88px 0 56px}
 .page-home .brand-image{width:880px;max-width:82vw}
@@ -148,7 +148,7 @@ to{opacity:1;filter:none;text-shadow:none}
 .site-header.is-open .nav-toggle span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
 .site-header.is-compact .header-inner{flex-direction:row;flex-wrap:nowrap;justify-content:center;gap:36px;padding:10px 0}
 .site-header.is-compact .brand-image,.page-home .site-header.is-compact .brand-image{width:200px;max-width:36vw}
-.site-header.is-compact .header-rule{display:none}
+.site-header.is-compact .header-rule{opacity:0;width:0;height:0;margin:0}
 .site-header.is-compact .site-nav,.page-home .site-header.is-compact .site-nav{margin-top:0}
 .page-home .site-header.is-compact .header-inner{padding:10px 0}
 @media (max-width:800px){
@@ -278,6 +278,19 @@ button:disabled{opacity:.6;cursor:wait}
 @media (max-width:800px){.filters{grid-template-columns:1fr 1fr}.condo-photos{grid-template-columns:1fr 1fr}.condo-photos img{height:150px}}
 @media (max-width:480px){.filters{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.reg-overlay,.reg-modal,.lightbox.on{animation:none}}
+.registration-bubble{
+  opacity:0;
+  transform:translate3d(0,18px,0);
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .95s cubic-bezier(.22,1,.36,1),transform .95s cubic-bezier(.22,1,.36,1),background .95s cubic-bezier(.22,1,.36,1),visibility .95s cubic-bezier(.22,1,.36,1);
+}
+.registration-bubble.is-in{
+  opacity:1;
+  transform:translate3d(0,0,0);
+  visibility:visible;
+  pointer-events:auto;
+}
 .registration-bubble[hidden]{display:none}
 @media (min-width:801px){.stats{grid-template-columns:repeat(var(--n,5),1fr)}}
 .condo{display:flex;flex-direction:column;overflow:hidden}

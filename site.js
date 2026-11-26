@@ -106,17 +106,40 @@ const bubble=`<div class="registration-bubble" id="bub" hidden><button class="re
 document.body.insertAdjacentHTML('beforeend',modal+bubble);
 const reg=document.getElementById('reg'),bub=document.getElementById('bub');
 const ss=(k,v)=>{try{return v===undefined?sessionStorage.getItem(k):sessionStorage.setItem(k,v)}catch(e){return null}};
-const openReg=()=>{reg.classList.add('on');bub.hidden=true;setTimeout(()=>document.getElementById('reg-n').focus(),50)};
-const closeReg=()=>{reg.classList.remove('on');ss('ph-convite','1');if(ss('ph-balao')!=='0')bub.hidden=false};
+const introOn=()=>document.documentElement.classList.contains('ph-px-intro')||!!document.querySelector('.ph-open');
+let bubHideT=0;
+const showBub=()=>{
+  if(ss('ph-balao')==='0'||document.body.dataset.noinvite)return;
+  if(reg.classList.contains('on'))return;
+  clearTimeout(bubHideT);
+  bub.hidden=false;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>bub.classList.add('is-in')));
+};
+const hideBub=(immediate)=>{
+  bub.classList.remove('is-in');
+  const finish=()=>{bub.hidden=true;bub.removeEventListener('transitionend',onEnd);clearTimeout(bubHideT)};
+  const onEnd=e=>{if(!e||e.propertyName==='opacity'||e.propertyName==='transform')finish()};
+  if(immediate||window.matchMedia('(prefers-reduced-motion: reduce)').matches){finish();return}
+  bub.addEventListener('transitionend',onEnd);
+  clearTimeout(bubHideT);
+  bubHideT=setTimeout(finish,1100);
+};
+const openReg=()=>{reg.classList.add('on');hideBub();setTimeout(()=>document.getElementById('reg-n').focus(),50)};
+const closeReg=()=>{reg.classList.remove('on');ss('ph-convite','1');if(ss('ph-balao')!=='0')showBub()};
 document.addEventListener('click',e=>{if(e.target.closest('[data-cadastro]')){e.preventDefault();openReg()}if(e.target.closest('[data-regclose]')||e.target===reg)closeReg()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&reg.classList.contains('on'))closeReg()});
-document.getElementById('bubx').onclick=()=>{bub.hidden=true;ss('ph-balao','0')};
+document.getElementById('bubx').onclick=()=>{ss('ph-balao','0');hideBub()};
 document.getElementById('reg-f').addEventListener('submit',e=>{e.preventDefault();
  const n=document.getElementById('reg-n').value.trim(),w=document.getElementById('reg-w').value.trim(),c=document.getElementById('reg-c').checked;
  let t=`Olá! Meu nome é ${n}.${w?` Meu WhatsApp: ${w}.`:''} Quero ajuda para encontrar uma casa em condomínio fechado.`;
  if(c)t+=' Quero receber novidades sobre imóveis pelo WhatsApp.';
- window.open(wa(t),'_blank','noopener');ss('ph-balao','0');bub.hidden=true;closeReg();bub.hidden=true});
-if(!document.body.dataset.noinvite&&ss('ph-balao')!=='0')setTimeout(()=>{if(!reg.classList.contains('on'))bub.hidden=false},900);
+ window.open(wa(t),'_blank','noopener');ss('ph-balao','0');hideBub(true);closeReg()});
+if(!document.body.dataset.noinvite&&ss('ph-balao')!=='0'){
+  const kick=()=>{if(!reg.classList.contains('on'))showBub()};
+  const waitIntro=()=>{if(introOn()){requestAnimationFrame(waitIntro);return}setTimeout(kick,800)};
+  if(introOn())waitIntro();
+  else setTimeout(kick,1100);
+}
 
 };
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready);else ready();
