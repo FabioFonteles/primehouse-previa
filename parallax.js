@@ -11,12 +11,12 @@
   const layers=[];
   let hero,photo,copy,ticking=false,io,mo;
   let introActive=false,introT0=null;
-  let openLayer,openBg,openLogo,openCap,flyFrom=null,flyTo=null,handed=false;
+  let openLayer,openBg,openLogo,openCap,openLine,openDesc,flyFrom=null,flyTo=null,handed=false;
   let flying=false,flyT0=null,readyToEnter=false,pendingEnter=false;
   let swipeY=null,swipeX=null,boundEnter=false;
 
-  /* Entrada da cena (logo + texto). O voo só começa após a interação. */
-  const T_LOGO=0, T_LOGO_END=700, T_DESC=700, T_DESC_END=1400;
+  /* Abertura no ritmo de trailer: respiro no preto, logo lenta, filete, texto; o voo só começa após a interação. */
+  const T_LOGO=350, T_LOGO_END=2750, T_LINE=3300, T_LINE_END=4200, T_DESC=3500, T_DESC_END=4900;
   const T_FLY_DUR=1250, T_CAP_FADE=420, T_BG_DELAY=200;
 
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -36,6 +36,16 @@
       return sy(x);
     };
   })(.16,1,.3,1);
+  const easeCine=(function(x1,y1,x2,y2){
+    const cx=3*x1,bx=3*(x2-x1)-cx,ax=1-cx-bx;
+    const cy=3*y1,by=3*(y2-y1)-cy,ay=1-cy-by;
+    const sx=t=>((ax*t+bx)*t+cx)*t, dx=t=>(3*ax*t+2*bx)*t+cx, sy=t=>((ay*t+by)*t+cy)*t;
+    return t=>{
+      t=clamp(t,0,1); let x=t;
+      for(let i=0;i<6;i++){const d=dx(x);if(Math.abs(d)<1e-6)break;x-=(sx(x)-t)/d}
+      return sy(x);
+    };
+  })(.22,.08,.22,1);
   const easeFly=(function(x1,y1,x2,y2){
     const cx=3*x1,bx=3*(x2-x1)-cx,ax=1-cx-bx;
     const cy=3*y1,by=3*(y2-y1)-cy,ay=1-cy-by;
@@ -214,12 +224,18 @@
 
     if(!flying){
       const ms=now-introT0;
-      const p=easeOut(clamp((ms-T_LOGO)/(T_LOGO_END-T_LOGO),0,1));
+      const p=ms<T_LOGO?0:easeCine(clamp((ms-T_LOGO)/(T_LOGO_END-T_LOGO),0,1));
       openLogo.style.opacity=String(p);
       openLogo.style.transformOrigin='50% 50%';
-      openLogo.style.transform=`translate3d(0,0,0) scale(${(0.96+0.04*p).toFixed(4)})`;
-      const d=ms<T_DESC?0:easeOut(clamp((ms-T_DESC)/(T_DESC_END-T_DESC),0,1));
-      if(openCap)openCap.style.opacity=String(d);
+      openLogo.style.transform=`translate3d(0,0,0) scale(${(0.94+0.06*p).toFixed(4)})`;
+      if(openCap)openCap.style.opacity='1';
+      const lineP=ms<T_LINE?0:easeCine(clamp((ms-T_LINE)/(T_LINE_END-T_LINE),0,1));
+      if(openLine){
+        openLine.style.transform=`scaleX(${lineP.toFixed(4)})`;
+        openLine.style.opacity=String((0.95*lineP).toFixed(3));
+      }
+      const d=ms<T_DESC?0:easeCine(clamp((ms-T_DESC)/(T_DESC_END-T_DESC),0,1));
+      if(openDesc)openDesc.style.opacity=String(d);
       if(openBg)openBg.style.opacity='1';
       if(ms>=T_DESC_END)readyToEnter=true;
       if(readyToEnter&&pendingEnter)startFly(now);
@@ -270,7 +286,7 @@
     if(target)target.style.opacity='';
     requestAnimationFrame(()=>{
       if(openLayer&&openLayer.parentNode)openLayer.parentNode.removeChild(openLayer);
-      openLayer=openBg=openLogo=openCap=null;
+      openLayer=openBg=openLogo=openCap=openLine=openDesc=null;
       root.classList.remove('ph-px-open-on','ph-px-intro-in');
       document.documentElement.style.overflow='';
       document.body.style.overflow='';
@@ -289,9 +305,13 @@
     openLayer=layer;
     openBg=layer.querySelector('.ph-open-bg');
     openLogo=layer.querySelector('.ph-open-logo');
-    openCap=layer.querySelector('.ph-open-desc')?layer.querySelector('.ph-open-cap'):null;
+    openCap=layer.querySelector('.ph-open-cap');
+    openLine=layer.querySelector('.ph-open-line');
+    openDesc=layer.querySelector('.ph-open-desc');
     openLogo.style.opacity='0';
-    if(openCap)openCap.style.opacity='0';
+    if(openCap)openCap.style.opacity='1';
+    if(openLine){openLine.style.opacity='0';openLine.style.transform='scaleX(0)'}
+    if(openDesc)openDesc.style.opacity='0';
     placeCenter();
     root.classList.add('ph-px-open-on');
     document.documentElement.style.overflow='hidden';
@@ -372,7 +392,7 @@
     introActive=false;introT0=null;handed=true;flying=false;
     unbindEnter();
     if(openLayer&&openLayer.parentNode)openLayer.parentNode.removeChild(openLayer);
-    openLayer=openBg=openLogo=openCap=null;
+    openLayer=openBg=openLogo=openCap=openLine=openDesc=null;
     root.classList.remove('ph-px-ready','ph-px-intro','ph-px-intro-in','ph-px-open-on');
     root.classList.add('ph-px-reduced');
     document.documentElement.style.overflow='';

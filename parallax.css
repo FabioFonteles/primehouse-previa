@@ -59,8 +59,11 @@ html.ph-px-intro .hero h1{animation:none;filter:none}
   width:88px;
   height:1px;
   background:#cfb681;
-  opacity:.95;
+  opacity:0;
   margin:0 0 22px;
+  transform:scaleX(0);
+  transform-origin:50% 50%;
+  will-change:transform,opacity;
 }
 .ph-open-desc{
   margin:0;

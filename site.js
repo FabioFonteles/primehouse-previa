@@ -25,6 +25,20 @@ document.body.insertAdjacentHTML('afterbegin',header);
  const path0=(location.pathname.split('/').pop()||'index.html');
  if(path0===''||path0==='index.html') document.body.classList.add('page-home');
  const hdr=document.querySelector('.site-header');
+ const slot=document.createElement('div');
+ slot.className='site-header-slot';
+ hdr.parentNode.insertBefore(slot,hdr);
+ slot.appendChild(hdr);
+ const measureSlot=()=>{
+  const wasCompact=hdr.classList.contains('is-compact');
+  const wasOpen=hdr.classList.contains('is-open');
+  if(wasCompact)hdr.classList.remove('is-compact');
+  if(wasOpen)hdr.classList.remove('is-open');
+  const h=Math.ceil(hdr.getBoundingClientRect().height);
+  if(h>0)slot.style.height=h+'px';
+  if(wasCompact)hdr.classList.add('is-compact');
+  if(wasOpen)hdr.classList.add('is-open');
+ };
  const tog=document.querySelector('.nav-toggle');
  const nav=document.getElementById('site-nav');
  const setOpen=on=>{
@@ -35,15 +49,34 @@ document.body.insertAdjacentHTML('afterbegin',header);
  tog.addEventListener('click',()=>setOpen(!hdr.classList.contains('is-open')));
  nav.addEventListener('click',e=>{if(e.target.closest('a'))setOpen(false)});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false)});
- window.addEventListener('resize',()=>{if(window.matchMedia('(min-width:801px)').matches)setOpen(false)});
- let compact=false;
+ let compact=false,lockUntil=0,lockTimer=0;
+ const enterY=()=>window.matchMedia('(max-width:800px)').matches?180:220;
+ const EXIT_Y=12,LOCK_MS=250;
  const onScroll=()=>{
+  const now=performance.now();
+  if(now<lockUntil)return;
   const y=window.scrollY||0;
-  const next=compact?y>16:y>56;
-  if(next!==compact){compact=next;hdr.classList.toggle('is-compact',compact)}
+  const next=compact?y>EXIT_Y:y>enterY();
+  if(next!==compact){
+   compact=next;
+   hdr.classList.toggle('is-compact',compact);
+   if(compact)setOpen(false);
+   lockUntil=now+LOCK_MS;
+   clearTimeout(lockTimer);
+   lockTimer=setTimeout(onScroll,LOCK_MS+16);
+  }
  };
+ const onResize=()=>{
+  if(window.matchMedia('(min-width:801px)').matches)setOpen(false);
+  measureSlot();
+  onScroll();
+ };
+ measureSlot();
  onScroll();
  window.addEventListener('scroll',onScroll,{passive:true});
+ window.addEventListener('resize',onResize);
+ if(document.readyState==='complete')measureSlot();
+ else window.addEventListener('load',measureSlot);
  const mark=()=>{
   const path=(location.pathname.split('/').pop()||'index.html');
   const hash=location.hash;
