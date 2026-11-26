@@ -1,15 +1,36 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Prime House - Belém Ananindeua</title><meta name="description" content="Casas em condomínios fechados em Belém, Ananindeua e Marituba."><link rel="icon" type="image/png" sizes="32x32" href="favicon.png"><link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prime House"><meta property="og:title" content="Prime House - Belém Ananindeua"><meta property="og:description" content="Casas em condomínios fechados em Belém, Ananindeua e Marituba."><meta property="og:image" content="https://primehousebelem.com.br/img/og-prime-house.jpg"><meta property="og:locale" content="pt_BR"><meta name="twitter:card" content="summary_large_image"><link rel="preload" as="image" href="img/hero-prime-house.jpg"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="parallax.css"><script>(function(){try{if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(sessionStorage.getItem("ph-px-intro"))return;document.documentElement.classList.add("ph-px-intro");setTimeout(function(){var h=document.documentElement;if(h.classList.contains("ph-px-intro")&&!document.querySelector(".ph-open"))h.classList.remove("ph-px-intro")},10000)}catch(e){}})();</script></head><body>
-<script src="data.js"></script><script src="condos.js"></script><script src="site.js"></script>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Casas em condomínios fechados em Belém, Ananindeua e Marituba · Prime House</title><meta name="description" content="Casas selecionadas nos principais condomínios fechados de Belém, Ananindeua e Marituba. Fale com o corretor e encontre a casa que combina com você."><link rel="canonical" href="https://primehousebelem.com.br/"><link rel="icon" type="image/png" sizes="32x32" href="favicon.png"><link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta property="og:type" content="website"><meta property="og:site_name" content="Prime House"><meta property="og:title" content="Casas em condomínios fechados em Belém, Ananindeua e Marituba · Prime House"><meta property="og:description" content="Casas selecionadas nos principais condomínios fechados de Belém, Ananindeua e Marituba. Fale com o corretor e encontre a casa que combina com você."><meta property="og:image" content="https://primehousebelem.com.br/img/og-prime-house.jpg"><meta property="og:url" content="https://primehousebelem.com.br/"><meta property="og:locale" content="pt_BR"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Casas em condomínios fechados em Belém, Ananindeua e Marituba · Prime House"><meta name="twitter:description" content="Casas selecionadas nos principais condomínios fechados de Belém, Ananindeua e Marituba. Fale com o corretor e encontre a casa que combina com você."><meta name="twitter:image" content="https://primehousebelem.com.br/img/og-prime-house.jpg"><link rel="preload" as="image" href="img/hero-prime-house.jpg"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="parallax.css"><script>(function(){try{if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;if(sessionStorage.getItem("ph-px-intro"))return;document.documentElement.classList.add("ph-px-intro");setTimeout(function(){var h=document.documentElement;if(h.classList.contains("ph-px-intro")&&!document.querySelector(".ph-open"))h.classList.remove("ph-px-intro")},10000)}catch(e){}})();</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "RealEstateAgent", "name": "Prime House", "url": "https://primehousebelem.com.br/", "image": "https://primehousebelem.com.br/img/og-prime-house.jpg", "telephone": "+5591980101026", "address": {"@type": "PostalAddress", "addressLocality": "Belém", "addressRegion": "PA", "addressCountry": "BR"}, "areaServed": [{"@type": "City", "name": "Belém"}, {"@type": "City", "name": "Ananindeua"}, {"@type": "City", "name": "Marituba"}], "sameAs": ["https://primehousebelem.com.br/"]}</script></head><body>
+<script src="data.js"></script><script src="condos.js"></script><script src="site.js"></script><script src="extras.js"></script>
 <section class="hero"><img class="hero-photo" src="img/hero-prime-house.jpg" alt="Casa em condomínio fechado"><div class="wrap hero-copy"><div class="eyebrow">CASAS EM CONDOMÍNIOS FECHADOS</div><h1>Apenas casas, somente as melhores, <em>nos melhores condomínios da região.</em></h1><p>Casas selecionadas em Belém, Ananindeua e Marituba. Encontre o espaço que combina com você.</p><a class="btn" href="#casas">Explore nossas casas</a></div></section>
 <div class="wrap"><form class="filters" id="filtros" onsubmit="return false">
 <div><label for="f-cond">Condomínio</label><select class="picker" id="f-cond" aria-label="Condomínio"><option value="">Todos os condomínios</option></select></div>
-<div><label for="f-preco">Investimento até</label><select class="picker" id="f-preco" aria-label="Preço máximo"><option value="">Todas as faixas</option><option value="750000">R$ 750 mil</option><option value="1000000">R$ 1 milhão</option><option value="1500000">R$ 1,5 milhão</option><option value="2500000">R$ 2,5 milhões</option></select></div>
-<div><label for="f-q">Quartos</label><select class="picker" id="f-q" aria-label="Quartos"><option value="">Todos</option><option value="3">3 ou mais</option><option value="4">4 ou mais</option></select></div>
 <div><label for="f-cid">Cidade</label><select class="picker" id="f-cid" aria-label="Cidade do imóvel"><option value="">Todas</option><option>Belém</option><option>Ananindeua</option><option>Marituba</option></select></div>
+<div><label for="f-q">Quartos</label><select class="picker" id="f-q" aria-label="Quartos"><option value="">Todos</option><option value="3">3 ou mais</option><option value="4">4 ou mais</option></select></div>
 <div><label for="f-s">Suítes privativas</label><select class="picker" id="f-s" aria-label="Suítes"><option value="">Todas</option><option value="1">1 ou mais</option><option value="2">2 ou mais</option><option value="3">3 ou mais</option></select></div>
+<div class="filter-invest" id="f-invest">
+<div class="filter-range-head"><span class="filter-range-label" id="f-invest-caption">Investimento</span><strong class="filter-range-value" id="f-invest-label"></strong></div>
+<div class="range-slider" id="f-range" role="group" aria-labelledby="f-invest-caption">
+<div class="range-track" aria-hidden="true"></div>
+<div class="range-fill" id="f-range-fill" aria-hidden="true"></div>
+<button type="button" class="range-thumb" id="f-min" role="slider" aria-label="Investimento mínimo" aria-valuemin="690000" aria-valuemax="9200000" aria-valuenow="690000" aria-valuetext="R$ 690 mil"></button>
+<button type="button" class="range-thumb" id="f-max" role="slider" aria-label="Investimento máximo" aria-valuemin="690000" aria-valuemax="9200000" aria-valuenow="9200000" aria-valuetext="R$ 9,2 mi"></button>
+</div>
+</div>
 <div><label for="f-ord">Ordenar</label><select class="picker" id="f-ord" aria-label="Ordenar imóveis"><option value="asc">Menor preço</option><option value="desc">Maior preço</option></select></div>
-<div></div>
-<button class="btn" type="button" id="f-go" style="align-self:end;height:45px"></button></form>
+<div class="filter-itens">
+<div class="filter-itens-label" id="f-itens-label">Indispensável na casa</div>
+<div class="filter-chips" role="group" aria-labelledby="f-itens-label">
+<button type="button" class="filter-chip" data-item="piscina" aria-pressed="false">Piscina</button>
+<button type="button" class="filter-chip" data-item="sauna" aria-pressed="false">Sauna</button>
+<button type="button" class="filter-chip" data-item="closet" aria-pressed="false">Closet</button>
+<button type="button" class="filter-chip" data-item="semi" aria-pressed="false">Semi mobiliado</button>
+<button type="button" class="filter-chip" data-item="mobiliado" aria-pressed="false">Mobiliado</button>
+</div>
+</div>
+<div class="filter-actions">
+<button class="btn-clear" type="button" id="f-clear">Limpar filtros</button>
+<button class="btn" type="button" id="f-go"></button>
+</div>
+</form>
 <section class="section" id="casas"><div class="section-head"><div><div class="eyebrow">NOSSA SELEÇÃO</div><h2>Casas para o seu próximo capítulo.</h2></div><small id="count"></small></div><div class="grid" id="grid"></div></section>
 <section class="section" id="mapa"><div class="section-head"><div><div class="eyebrow">ONDE ESTÃO AS CASAS</div><h2>Mapa interativo.</h2><p>Veja a localização aproximada de cada condomínio. O mapa acompanha os filtros acima.</p></div><small id="map-count"></small></div>
 <div id="mapa-canvas" class="map-canvas" role="region" aria-label="Mapa das casas em condomínios"></div>
@@ -18,18 +39,94 @@
 <section class="section wrap" id="condominios"><div class="section-head"><div><div class="eyebrow">ESCOLHA ONDE VIVER</div><h2>Conheça os condomínios.</h2><p>Comece pelo lugar. Nós ajudamos você a encontrar a casa.</p></div><a class="text-link" href="condominios.html">Ver todos os condomínios</a></div><div class="condos" id="condos"></div></section>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-(()=>{const {I,cardHTML,condoHTML,condList,houses,brl,esc,wa,m2,suites,pintaMapa}=PH;const H=houses();
+(()=>{const {I,cardHTML,cardMedia,condoHTML,condList,houses,brl,esc,wa,m2,suites,pintaMapa,houseHasItem,INVEST,faixaLabel,curtoFaixa}=PH;const H=houses();
 const $=id=>document.getElementById(id);
 $('f-go').innerHTML=I.search+' Buscar casas';
 [...new Set(H.map(h=>h.cond))].sort((a,b)=>a.localeCompare(b,'pt-BR')).forEach(n=>$('f-cond').insertAdjacentHTML('beforeend',`<option>${esc(n)}</option>`));
 const qp=new URLSearchParams(location.search);if(qp.get('condominio'))$('f-cond').value=qp.get('condominio');
-const run=()=>{const c=$('f-cond').value,p=+$('f-preco').value||Infinity,q=+$('f-q').value||0,ci=$('f-cid').value,s=+$('f-s').value||0,o=$('f-ord').value;
- const r=H.filter(h=>(!c||h.cond===c)&&h.valor<=p&&h.q>=q&&(!ci||h.cidade===ci)&&h.s>=s).sort((a,b)=>o==='desc'?b.valor-a.valor:a.valor-b.valor);
+const RANGE=INVEST||{min:690000,max:9200000,step:5000};
+let vmin=RANGE.min,vmax=RANGE.max;
+const snap=v=>{v=Math.round(v/RANGE.step)*RANGE.step;return Math.min(RANGE.max,Math.max(RANGE.min,v))};
+const toPct=v=>{const a=Math.log(RANGE.min),b=Math.log(RANGE.max);return (Math.log(Math.min(RANGE.max,Math.max(RANGE.min,v)))-a)/(b-a)};
+const fromPct=p=>{const a=Math.log(RANGE.min),b=Math.log(RANGE.max);return snap(Math.exp(a+Math.min(1,Math.max(0,p))*(b-a)))};
+const paintRange=()=>{
+  const minEl=$('f-min'),maxEl=$('f-max'),fill=$('f-range-fill'),lab=$('f-invest-label');
+  const p0=toPct(vmin)*100,p1=toPct(vmax)*100;
+  if(minEl){minEl.style.left=p0+'%';minEl.setAttribute('aria-valuenow',String(vmin));minEl.setAttribute('aria-valuetext',curtoFaixa(vmin))}
+  if(maxEl){maxEl.style.left=p1+'%';maxEl.setAttribute('aria-valuenow',String(vmax));maxEl.setAttribute('aria-valuetext',curtoFaixa(vmax))}
+  if(fill){fill.style.left=p0+'%';fill.style.width=Math.max(0,p1-p0)+'%'}
+  if(lab)lab.textContent=faixaLabel(vmin,vmax);
+};
+const selectedItems=()=>[...document.querySelectorAll('.filter-chip[aria-pressed="true"]')].map(b=>b.getAttribute('data-item')).filter(Boolean);
+const run=()=>{
+ const c=$('f-cond').value,q=+$('f-q').value||0,ci=$('f-cid').value,s=+$('f-s').value||0,o=$('f-ord').value;
+ const items=selectedItems();
+ const r=H.filter(h=>(!c||h.cond===c)&&h.valor>=vmin&&h.valor<=vmax&&h.q>=q&&(!ci||h.cidade===ci)&&h.s>=s&&items.every(k=>houseHasItem(h,k))).sort((a,b)=>o==='desc'?b.valor-a.valor:a.valor-b.valor);
  $('grid').innerHTML=r.length?r.map(cardHTML).join(''):'<div class="empty">Nenhuma casa com esses filtros no momento. <a class="text-link" href="'+wa('Olá! Procuro uma casa em condomínio fechado.')+'" target="_blank" rel="noreferrer">Fale com o corretor</a></div>';
  $('count').textContent=`${r.length} ${r.length===1?'imóvel':'imóveis'} na seleção`;
  const mc=$('map-count');if(mc)mc.textContent=`${r.length} ${r.length===1?'imóvel':'imóveis'} no mapa`;
- pintaMapa(r);};
-document.querySelectorAll('#filtros select').forEach(s=>s.addEventListener('change',run));
+ pintaMapa(r);
+};
+let runT=0;
+const runSoon=()=>{clearTimeout(runT);runT=setTimeout(run,40)};
+document.querySelectorAll('#filtros select').forEach(el=>el.addEventListener('change',run));
+document.querySelectorAll('.filter-chip').forEach(btn=>btn.addEventListener('click',()=>{
+  btn.setAttribute('aria-pressed',btn.getAttribute('aria-pressed')==='true'?'false':'true');
+  run();
+}));
+$('f-clear').addEventListener('click',()=>{
+  $('f-cond').value='';$('f-cid').value='';$('f-q').value='';$('f-s').value='';$('f-ord').value='asc';
+  document.querySelectorAll('.filter-chip').forEach(b=>b.setAttribute('aria-pressed','false'));
+  vmin=RANGE.min;vmax=RANGE.max;paintRange();run();
+});
+(()=>{
+  const root=$('f-range'); if(!root)return;
+  const thumbs={min:$('f-min'),max:$('f-max')};
+  let drag=null;
+  const posOf=e=>{
+    const r=root.getBoundingClientRect();
+    const x=(('clientX' in e?e.clientX:(e.touches&&e.touches[0].clientX))||0)-r.left;
+    return fromPct(r.width?x/r.width:0);
+  };
+  const apply=(which,val)=>{
+    if(which==='min') vmin=Math.min(snap(val),vmax-RANGE.step);
+    else vmax=Math.max(snap(val),vmin+RANGE.step);
+    vmin=Math.max(RANGE.min,vmin); vmax=Math.min(RANGE.max,vmax);
+    if(thumbs.min)thumbs.min.classList.toggle('is-front',which==='min');
+    if(thumbs.max)thumbs.max.classList.toggle('is-front',which==='max');
+    paintRange();runSoon();
+  };
+  const nearer=val=>((Math.abs(val-vmin)<=Math.abs(val-vmax))?'min':'max');
+  const down=e=>{
+    const t=e.target.closest('.range-thumb');
+    const which=t?(t.id==='f-min'?'min':'max'):nearer(posOf(e));
+    drag=which;
+    try{root.setPointerCapture&&e.pointerId!=null&&root.setPointerCapture(e.pointerId)}catch(err){}
+    e.preventDefault();
+    apply(which,posOf(e));
+  };
+  const move=e=>{if(!drag)return;e.preventDefault();apply(drag,posOf(e))};
+  const up=e=>{if(!drag)return;drag=null;clearTimeout(runT);run();};
+  root.addEventListener('pointerdown',down);
+  window.addEventListener('pointermove',move,{passive:false});
+  window.addEventListener('pointerup',up);
+  window.addEventListener('pointercancel',up);
+  const key=which=>e=>{
+    const step=e.shiftKey?RANGE.step*10:RANGE.step;
+    let v=which==='min'?vmin:vmax;
+    if(e.key==='ArrowLeft'||e.key==='ArrowDown')v-=step;
+    else if(e.key==='ArrowRight'||e.key==='ArrowUp')v+=step;
+    else if(e.key==='Home')v=RANGE.min;
+    else if(e.key==='End')v=RANGE.max;
+    else if(e.key==='PageDown')v-=RANGE.step*20;
+    else if(e.key==='PageUp')v+=RANGE.step*20;
+    else return;
+    e.preventDefault();apply(which,v);clearTimeout(runT);run();
+  };
+  thumbs.min.addEventListener('keydown',key('min'));
+  thumbs.max.addEventListener('keydown',key('max'));
+})();
+paintRange();
 $('f-go').onclick=()=>{run();$('casas').scrollIntoView({behavior:'smooth'})};run();
 $('condos').innerHTML=condList().map(c=>condoHTML(c)).join('');
 // Busca personalizada: compara o texto com o catálogo (no próprio navegador)
@@ -44,7 +141,7 @@ $('q-form').addEventListener('submit',e=>{e.preventDefault();const raw=$('query'
  let r=H.filter(h=>h.valor<=max&&(!qm||h.q>=+qm[1])&&(!sm||h.s>=+sm[1])&&(!conds.length||conds.includes(h.cond))&&(!city||h.cidade===city));
  const score=h=>kws.filter(k=>norm(h.desc+' '+h.nome+' '+(h.dif||[]).join(' ')).includes(k)).length;
  r=r.map(h=>[h,score(h)]).filter(x=>!kws.length||x[1]>0).sort((a,b)=>b[1]-a[1]||a[0].valor-b[0].valor).map(x=>x[0]).slice(0,6);
- $('q-res').innerHTML=r.length?r.map(h=>`<div class="search-result"><a href="casa.html?id=${encodeURIComponent(h.id)}"><img src="${esc(h.img[0])}" alt="Fachada da casa no ${esc(h.cond)}" loading="lazy"><span>Casa no ${esc(h.cond)}<small>${esc(h.cidade)} · ${h.q} quartos · ${suites(h)}${h.area?` · ${m2(h.area)} m²`:''} · ${brl(h.valor)}</small></span></a></div>`).join(''):
+ $('q-res').innerHTML=r.length?r.map(h=>`<div class="search-result">${cardMedia(h)}<a href="casa.html?id=${encodeURIComponent(h.id)}"><span>Casa no ${esc(h.cond)}<small>${esc(h.cidade)} · ${h.q} quartos · ${suites(h)}${h.area?` · ${m2(h.area)} m²`:''} · ${brl(h.valor)}</small></span></a></div>`).join(''):
  `<div class="notice">Não encontramos uma casa com essas características no catálogo agora. <a class="text-link" href="${wa('Olá! Procuro uma casa assim: '+raw)}" target="_blank" rel="noreferrer">Fale com o corretor</a></div>`});
 })();
 </script>

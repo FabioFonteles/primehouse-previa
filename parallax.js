@@ -362,6 +362,7 @@
       const box=layer.media||layer.el;
       const r=box.getBoundingClientRect();
       if(r.bottom<-80||r.top>vh+80)return;
+      if(layer.kind==='card'&&layer.media&&layer.media.classList.contains('is-hovering'))return;
       const scale=isMobile()?1.12:1.16;
       const slack=(Math.max(box.offsetHeight||r.height,1)*(scale-1)/2)*0.8;
       const t=(vh/2-(r.top+r.height/2))/vh;

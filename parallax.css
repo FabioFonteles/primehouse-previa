@@ -99,13 +99,20 @@ html.ph-px-intro .hero h1{animation:none;filter:none}
 }
 
 .ph-px-ready .card-media{overflow:hidden}
-.ph-px-ready .card-media img{
+.ph-px-ready .card-media img,
+.ph-px-ready .card-shot{
   transition:none;
   transform:translate3d(0,0,0) scale(1.16);
   transform-origin:50% 48%;
   backface-visibility:hidden;
 }
-.ph-px-ready .card:hover img{transform:translate3d(0,0,0) scale(1.16)}
+.ph-px-ready .card:hover img,
+.ph-px-ready .card:hover .card-shot{transform:translate3d(0,0,0) scale(1.16)}
+.ph-px-ready .card-media.is-hovering .card-shot,
+.ph-px-ready .card-media.is-leaving .card-shot{
+  transition:opacity .5s ease,transform .45s cubic-bezier(.22,1,.36,1);
+}
+.ph-px-ready .card-media.is-hovering .card-shot{transition:opacity .5s ease,transform .16s ease-out}
 
 .ph-px-detail{
   overflow:hidden;

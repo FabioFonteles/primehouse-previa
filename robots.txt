@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://primehousebelem.com.br/sitemap.xml

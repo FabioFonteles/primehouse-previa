@@ -9,6 +9,7 @@ const I={
  bed:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"></path><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"></path><path d="M12 4v6"></path><path d="M2 18h20"></path></svg>',
  car:'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.646 5H8.4a2 2 0 0 0-1.903 1.257L5 10 3 8"></path><path d="M7 14h.01"></path><path d="M17 14h.01"></path><rect width="18" height="8" x="3" y="10" rx="2"></rect><path d="M5 18v2"></path><path d="M19 18v2"></path></svg>',
  heart:'<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path></svg>',
+ cmp:'<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="10" width="5" height="11" rx="0.5"></rect><rect x="10" y="3" width="5" height="18" rx="0.5"></rect><rect x="17" y="13" width="5" height="8" rx="0.5"></rect></svg>',
  waLogo:'<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.87 11.87 0 0 0 12.04 0C5.46 0 .1 5.35.1 11.93c0 2.1.55 4.15 1.59 5.96L0 24l6.27-1.64a11.93 11.93 0 0 0 5.77 1.47h.01c6.58 0 11.94-5.35 11.95-11.93a11.86 11.86 0 0 0-3.48-8.42ZM12.05 21.8a9.9 9.9 0 0 1-5.04-1.38l-.36-.21-3.72.97.99-3.63-.24-.37a9.88 9.88 0 0 1-1.52-5.25c0-5.47 4.46-9.92 9.93-9.92a9.85 9.85 0 0 1 7.02 2.91 9.86 9.86 0 0 1 2.91 7.02c0 5.47-4.46 9.92-9.97 9.86Zm5.45-7.42c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.18-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.88.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z"></path></svg>'
 };
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -18,7 +19,7 @@ const suites=c=>`${c.s} suíte${c.s>1?'s':''}`;const vagas=c=>`${c.vagas} vaga${
 const logo=(extra='')=>`<a class="brand brand-image ${extra}" href="index.html" aria-label="Prime House — página inicial"><img src="img/logo-prime-house-letreiro.png" alt="Prime House" width="1202" height="121"></a>`;
 
 // ---------- cabeçalho, rodapé, WhatsApp flutuante ----------
-const header=`<header class="site-header"><div class="wrap header-inner"><div class="header-brand-row">${logo()}<button class="nav-toggle" type="button" aria-label="Abrir menu" aria-controls="site-nav" aria-expanded="false"><span></span><span></span><span></span></button></div><div class="header-rule" aria-hidden="true"></div><nav id="site-nav" class="site-nav"><a href="index.html#casas">Encontre sua casa</a><a href="index.html#mapa">Mapa</a><a href="condominios.html">Conheça os condomínios</a><a href="index.html#busca">Busca personalizada</a><a class="nav-cta" href="${wa('Olá, procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">Fale com o corretor</a></nav></div></header>`;
+const header=`<header class="site-header"><div class="wrap header-inner"><div class="header-brand-row">${logo()}<button class="nav-toggle" type="button" aria-label="Abrir menu" aria-controls="site-nav" aria-expanded="false"><span></span><span></span><span></span></button></div><div class="header-rule" aria-hidden="true"></div><nav id="site-nav" class="site-nav"><a href="index.html#filtros">Encontre sua casa</a><a href="index.html#mapa">Mapa</a><a href="condominios.html">Conheça os condomínios</a><a class="nav-offer" href="anuncie.html" title="Traga sua casa para o nosso portfólio"><span class="nav-full">Traga sua casa para o nosso portfólio</span><span class="nav-short">Traga sua casa</span></a><a class="nav-cta" href="${wa('Olá, procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">Fale com o corretor</a></nav></div></header>`;
 const footer=`<footer class="footer"><div class="wrap footer-inner">${logo('footer-brand')}<div class="footer-meta"><div>Fale com o corretor · CRECI 9493<br>WhatsApp <a href="${wa('Olá! Procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">(91) 98010-1026</a><br>Exija o CRECI</div><div>Belém · Ananindeua · Marituba<br><a href="privacidade.html">Privacidade</a> · <button type="button" data-cadastro class="footer-cadastro">Meu cadastro</button></div></div></div></footer><a class="floating-whatsapp" href="${wa('Olá! Procuro uma casa em condomínio fechado.')}" target="_blank" rel="noopener noreferrer" aria-label="Fale com o corretor pelo WhatsApp" title="Fale com o corretor no WhatsApp">${I.waLogo}</a>`;
 document.body.insertAdjacentHTML('afterbegin',header);
 (function(){
@@ -50,6 +51,7 @@ document.body.insertAdjacentHTML('afterbegin',header);
  nav.addEventListener('click',e=>{if(e.target.closest('a'))setOpen(false)});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false)});
  let compact=false,lockUntil=0,lockTimer=0;
+ let setHeaderOffset=()=>{};
  const enterY=()=>window.matchMedia('(max-width:800px)').matches?180:220;
  const EXIT_Y=12,LOCK_MS=250;
  const onScroll=()=>{
@@ -65,11 +67,13 @@ document.body.insertAdjacentHTML('afterbegin',header);
    clearTimeout(lockTimer);
    lockTimer=setTimeout(onScroll,LOCK_MS+16);
   }
+  if(typeof setHeaderOffset==='function')setHeaderOffset();
  };
  const onResize=()=>{
   if(window.matchMedia('(min-width:801px)').matches)setOpen(false);
   measureSlot();
   onScroll();
+  if(typeof setHeaderOffset==='function')setHeaderOffset();
  };
  measureSlot();
  onScroll();
@@ -77,6 +81,64 @@ document.body.insertAdjacentHTML('afterbegin',header);
  window.addEventListener('resize',onResize);
  if(document.readyState==='complete')measureSlot();
  else window.addEventListener('load',measureSlot);
+ setHeaderOffset=()=>{
+  const h=Math.ceil(hdr.getBoundingClientRect().height)||80;
+  document.documentElement.style.setProperty('--header-offset',(h+20)+'px');
+ };
+ const headerOffset=()=>Math.ceil(hdr.getBoundingClientRect().height)+20;
+ const jumpTo=(top)=>{
+  const html=document.documentElement;
+  const prev=html.style.scrollBehavior;
+  html.style.scrollBehavior='auto';
+  html.scrollTop=top;
+  if(document.body)document.body.scrollTop=top;
+  window.scrollTo(0,top);
+  html.style.scrollBehavior=prev;
+ };
+ const scrollToEl=(el,smooth)=>{
+  if(!el)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dest=()=>Math.max(0,Math.round(el.getBoundingClientRect().top+window.scrollY-headerOffset()));
+  const tentative=window.scrollY+el.getBoundingClientRect().top-80;
+  if(tentative>enterY()&&!compact){
+   compact=true;
+   hdr.classList.add('is-compact');
+   setOpen(false);
+  }
+  setHeaderOffset();
+  const far=()=>Math.abs(dest()-window.scrollY)>1800;
+  const useSmooth=smooth&&!reduce&&!far();
+  requestAnimationFrame(()=>{
+   requestAnimationFrame(()=>{
+    setHeaderOffset();
+    const top=dest();
+    if(useSmooth){
+     window.scrollTo({top,behavior:'smooth'});
+     setTimeout(()=>{setHeaderOffset();jumpTo(dest())},520);
+    }else{
+     jumpTo(top);
+     setTimeout(()=>{setHeaderOffset();jumpTo(dest())},80);
+    }
+   });
+  });
+ };
+ const onNavClick=e=>{
+  const a=e.target.closest('a[href]');
+  if(!a||a.target==='_blank'||a.classList.contains('nav-cta'))return;
+  const url=new URL(a.href,location.href);
+  if(url.origin!==location.origin||!url.hash)return;
+  const here=(location.pathname.split('/').pop()||'index.html');
+  const there=(url.pathname.split('/').pop()||'index.html');
+  const same=(there===''||there==='index.html')&&(here===''||here==='index.html');
+  if(!same)return;
+  const el=document.getElementById(url.hash.slice(1));
+  if(!el)return;
+  e.preventDefault();
+  history.pushState(null,'',url.hash);
+  scrollToEl(el,true);
+  mark();
+ };
+ document.addEventListener('click',onNavClick);
  const mark=()=>{
   const path=(location.pathname.split('/').pop()||'index.html');
   const hash=location.hash;
@@ -85,17 +147,21 @@ document.body.insertAdjacentHTML('afterbegin',header);
    const href=a.getAttribute('href')||'';
    let on=false;
    if(path==='condominios.html'||path==='condominio.html') on=href.indexOf('condominios.html')!==-1;
-   else if(path==='casa.html') on=href.indexOf('#casas')!==-1;
+   else if(path==='anuncie.html') on=href.indexOf('anuncie.html')!==-1;
+   else if(path==='casa.html') on=href.indexOf('#filtros')!==-1;
    else if(path==='index.html'||path===''){
-    if(hash==='#busca') on=href.indexOf('#busca')!==-1;
-    else if(hash==='#mapa') on=href.indexOf('#mapa')!==-1;
-    else on=href.indexOf('#casas')!==-1;
+    if(hash==='#mapa') on=href.indexOf('#mapa')!==-1;
+    else if(hash==='#filtros'||hash==='#casas'||hash==='') on=href.indexOf('#filtros')!==-1;
    }
    if(on)a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
   });
  };
  mark();
- window.addEventListener('hashchange',mark);
+ window.addEventListener('hashchange',()=>{mark();const el=document.getElementById((location.hash||'').slice(1));if(el)scrollToEl(el,false)});
+ const fixHash=()=>{const el=document.getElementById((location.hash||'').slice(1));if(el)scrollToEl(el,false)};
+ requestAnimationFrame(()=>requestAnimationFrame(fixHash));
+ window.addEventListener('load',fixHash);
+ setHeaderOffset();
 })();
 
 
@@ -146,7 +212,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 // ---------- utilitários de dados ----------
 const houses=()=>(typeof CASAS!=='undefined'?CASAS:[]);
 const condName=c=>c.cond;
-const cardHTML=c=>`<article class="card"><a class="card-media" href="casa.html?id=${encodeURIComponent(c.id)}"><img src="${esc(c.img[0])}" alt="Fachada da casa no ${esc(c.cond)}" loading="lazy"><span class="tag">${esc(c.cond)}</span></a><div class="card-body"><div class="location">${esc(c.cidade)}${c.bairro&&c.bairro!=='Centro'?' · '+esc(c.bairro):''}</div><h3>${esc(c.cond)} · ${c.q} quartos</h3><div class="specs">${c.area?`<span>${I.area}${m2(c.area)} m²</span>`:''}<span>${I.bed}${suites(c)}</span><span>${I.car}${vagas(c)}</span></div><div class="card-bottom"><div class="price">${brl(c.valor)}</div><a href="casa.html?id=${encodeURIComponent(c.id)}" class="text-link">Conhecer a casa</a></div></div></article>`;
+const photoList=c=>Array.isArray(c.img)?c.img.filter(Boolean):[];
+const photoAttr=c=>photoList(c).map(encodeURIComponent).join(' ');
+const cardDots=c=>{const n=photoList(c).length;return n>1?`<span class="card-dots" aria-hidden="true">${Array.from({length:n},(_,i)=>`<i${i===0?' class="on"':''}></i>`).join('')}</span>`:''};
+const cardMedia=c=>`<a class="card-media" href="casa.html?id=${encodeURIComponent(c.id)}" data-photos="${photoAttr(c)}"><span class="card-shots"><img class="card-shot is-on" src="${esc(photoList(c)[0]||'')}" alt="Fachada da casa no ${esc(c.cond)}" loading="lazy"><img class="card-shot" alt="" aria-hidden="true"></span><span class="tag">${esc(c.cond)}</span>${cardDots(c)}</a>`;
+const cardActions=c=>`<div class="card-actions"><button type="button" class="card-act card-fav" data-fav="${esc(c.id)}" aria-label="Salvar nos favoritos" aria-pressed="false" title="Salvar nos favoritos">${I.heart}</button><button type="button" class="card-act card-cmp" data-cmp="${esc(c.id)}" aria-label="Comparar esta casa" aria-pressed="false" title="Comparar">${I.cmp}<span>Comparar</span></button></div>`;
+const cardHTML=c=>`<article class="card" data-id="${esc(c.id)}">${cardMedia(c)}${cardActions(c)}<div class="card-body"><div class="location">${esc(c.cidade)}${c.bairro&&c.bairro!=='Centro'?' · '+esc(c.bairro):''}</div><h3>${esc(c.cond)} · ${c.q} quartos</h3><div class="specs">${c.area?`<span>${I.area}${m2(c.area)} m²</span>`:''}<span>${I.bed}${suites(c)}</span><span>${I.car}${vagas(c)}</span></div><div class="card-bottom"><div class="price">${brl(c.valor)}</div><a href="casa.html?id=${encodeURIComponent(c.id)}" class="text-link">Conhecer a casa</a></div></div></article>`;
 
 const starsRow=(c)=>{
  if(typeof c.googleRating!=='number'||!c.googleReviewsCount)return '';
@@ -279,5 +350,234 @@ const mountMiniMap=(elId,target)=>{
   setTimeout(()=>m.invalidateSize(),200);
   return m;
 };
-window.PH={houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,condoHTML,condList,houses,coordsOf,pintaMapa,initVitrineMap,mountMiniMap,curtoPreco,starsRow,reviewsBlock,amenityBlock,photosBlock,openCondoLightbox};
+
+/* ---- filtros: faixa de investimento e itens da casa (não do condomínio) ---- */
+const foldTxt=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const houseBlob=h=>[h.nome,h.desc,...(h.dif||[])].map(foldTxt).join(' | ');
+const houseHasItem=(h,key)=>{
+  const blob=houseBlob(h);
+  const desc=foldTxt(h.desc);
+  const tags=(h.dif||[]).map(foldTxt);
+  const nome=foldTxt(h.nome);
+  if(key==='piscina'){
+    const t=nome+' | '+desc+' | '+tags.join(' | ');
+    if(/piscina privativa/.test(t)||/piscina com deck/.test(t))return true;
+    if(/voltada para a piscina/.test(desc))return true;
+    if(/gourmet com churrasqueira e piscina/.test(desc))return true;
+    return false;
+  }
+  if(key==='sauna')return /\bsaunas?\b/.test(blob);
+  if(key==='closet')return /\bclosets?\b/.test(blob);
+  if(key==='semi')return /semi[\s-]?mobiliad/.test(blob);
+  if(key==='mobiliado'){
+    if(/semi[\s-]?mobiliad/.test(blob))return false;
+    return /\bmobiliad/.test(blob);
+  }
+  return false;
+};
+const INVEST={min:690000,max:9200000,step:5000};
+const curtoFaixa=v=>{
+  v=Math.round(+v||0);
+  if(v>=1e6){
+    const n=v/1e6;
+    return 'R$ '+n.toLocaleString('pt-BR',{maximumFractionDigits:3,minimumFractionDigits:0})+' mi';
+  }
+  return 'R$ '+Math.round(v/1000).toLocaleString('pt-BR')+' mil';
+};
+const faixaLabel=(a,b)=>curtoFaixa(a)+' – '+curtoFaixa(b);
+
+window.PH={houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,cardMedia,cardActions,photoList,condoHTML,condList,houses,coordsOf,pintaMapa,initVitrineMap,mountMiniMap,curtoPreco,starsRow,reviewsBlock,amenityBlock,photosBlock,openCondoLightbox,houseHasItem,INVEST,curtoFaixa,faixaLabel};
+
+/* ---- vitrine: parallax no hover + troca suave de fotos ao permanecer ---- */
+(()=>{
+  const canHover=()=>window.matchMedia('(hover:hover) and (pointer:fine)').matches&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const photosOf=media=>(media.getAttribute('data-photos')||'').split(/\s+/).filter(Boolean).map(decodeURIComponent);
+  const preload=src=>{if(!src)return;const im=new Image();im.src=src};
+  const dots=(media,idx)=>media.querySelectorAll('.card-dots i').forEach((d,i)=>d.classList.toggle('on',i===idx));
+  const applyShift=(media,nx,ny)=>{
+    const tx=(nx*16).toFixed(2),ty=(ny*12).toFixed(2);
+    media.querySelectorAll('.card-shot').forEach(img=>{img.style.transform=`translate3d(${tx}px,${ty}px,0) scale(1.2)`});
+  };
+  const showIdx=(media,st,idx)=>{
+    const photos=st.photos; if(!photos.length)return;
+    idx=(idx+photos.length)%photos.length;
+    const shots=[...media.querySelectorAll('.card-shot')];
+    if(shots.length<2){if(shots[0])shots[0].src=photos[idx];st.idx=idx;dots(media,idx);return}
+    const on=shots.find(s=>s.classList.contains('is-on'))||shots[0];
+    const off=shots.find(s=>s!==on)||shots[1];
+    if(off.getAttribute('src')===photos[idx]&&off.classList.contains('is-on')){st.idx=idx;dots(media,idx);return}
+    const flip=()=>{
+      off.classList.add('is-on');
+      on.classList.remove('is-on');
+      st.idx=idx;
+      dots(media,idx);
+      preload(photos[(idx+1)%photos.length]);
+    };
+    off.src=photos[idx];
+    if(off.complete)flip();
+    else off.onload=()=>{off.onload=null;flip()};
+  };
+  const enter=(media)=>{
+    if(media._ph)return;
+    const photos=photosOf(media);
+    const st={photos,idx:0,dwell:0,cycle:0,raf:0,nx:0,ny:0};
+    media._ph=st;
+    media.classList.add('is-hovering');
+    if(photos[1])preload(photos[1]);
+    if(photos.length>1){
+      st.dwell=setTimeout(()=>{
+        if(!media._ph)return;
+        showIdx(media,st,1);
+        st.cycle=setInterval(()=>showIdx(media,st,st.idx+1),1200);
+      },520);
+    }
+  };
+  const leave=(media)=>{
+    const st=media._ph; if(!st)return;
+    clearTimeout(st.dwell); clearInterval(st.cycle);
+    media._ph=null;
+    media.classList.add('is-leaving');
+    media.classList.remove('is-hovering');
+    const on=media.querySelector('.card-shot.is-on');
+    const cover=st.photos[0];
+    if(cover&&on&&on.getAttribute('src')!==cover) showIdx(media,{photos:st.photos,idx:1},0);
+    else dots(media,0);
+    media.querySelectorAll('.card-shot').forEach(img=>{img.style.transform=''});
+    setTimeout(()=>media.classList.remove('is-leaving'),500);
+  };
+  const move=(media,e)=>{
+    if(!media._ph)enter(media);
+    const r=media.getBoundingClientRect();
+    const nx=((e.clientX-r.left)/Math.max(r.width,1))*2-1;
+    const ny=((e.clientY-r.top)/Math.max(r.height,1))*2-1;
+    applyShift(media,Math.max(-1,Math.min(1,nx)),Math.max(-1,Math.min(1,ny)));
+  };
+  document.addEventListener('pointerover',e=>{
+    if(e.pointerType&&e.pointerType!=='mouse')return;
+    if(!canHover())return;
+    const media=e.target.closest&&e.target.closest('.card-media');
+    if(!media||media._ph)return;
+    enter(media);
+  },true);
+  document.addEventListener('pointermove',e=>{
+    if(e.pointerType&&e.pointerType!=='mouse')return;
+    if(!canHover())return;
+    const media=e.target.closest&&e.target.closest('.card-media');
+    if(media)move(media,e);
+  },true);
+  document.addEventListener('pointerout',e=>{
+    const media=e.target.closest&&e.target.closest('.card-media');
+    if(!media||!media._ph)return;
+    const to=e.relatedTarget;
+    if(to&&media.contains(to))return;
+    leave(media);
+  },true);
+})();
+
+/* ---- formulário Traga sua casa para o nosso portfólio ---- */
+const bindOfferForm=()=>{
+  const form=document.getElementById('offer-form');
+  if(!form||form.dataset.bound)return;
+  form.dataset.bound='1';
+  const list=document.getElementById('offer-photos');
+  const input=document.getElementById('offer-files');
+  const drop=document.getElementById('offer-drop');
+  const count=document.getElementById('offer-count');
+  const done=document.getElementById('offer-done');
+  const doneMsg=document.getElementById('offer-done-msg');
+  const MAX=12, MAX_MB=8;
+  let files=[];
+  const render=()=>{
+    if(count)count.textContent=files.length?`${files.length} ${files.length===1?'foto selecionada':'fotos selecionadas'}`:'Nenhuma foto selecionada';
+    if(!list)return;
+    list.innerHTML=files.map((f,i)=>`<li><img src="${f.url}" alt=""><button type="button" data-rm="${i}" aria-label="Remover foto">×</button></li>`).join('');
+  };
+  const add=listIn=>{
+    [...listIn].forEach(file=>{
+      if(!file.type||file.type.indexOf('image/')!==0)return;
+      if(files.length>=MAX)return;
+      if(file.size>MAX_MB*1024*1024){alert(`A foto “${file.name}” passa de ${MAX_MB} MB. Escolha um arquivo menor.`);return}
+      files.push({file,url:URL.createObjectURL(file),name:file.name});
+    });
+    render();
+  };
+  if(input)input.addEventListener('change',e=>{add(e.target.files||[]);input.value=''});
+  if(list)list.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-rm]'); if(!btn)return;
+    const i=+btn.getAttribute('data-rm');
+    if(!files[i])return;
+    URL.revokeObjectURL(files[i].url);
+    files.splice(i,1);
+    render();
+  });
+  if(drop){
+    ;['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('is-over')}));
+    ;['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('is-over')}));
+    drop.addEventListener('drop',e=>add(e.dataTransfer&&e.dataTransfer.files||[]));
+    drop.addEventListener('click',()=>input&&input.click());
+    drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();input&&input.click()}});
+  }
+  const val=id=>(form.elements[id]&&form.elements[id].value||'').trim();
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const required=['condominio','cidade','valor','descricao','nome','whatsapp'];
+    let ok=true;
+    required.forEach(id=>{
+      const el=form.elements[id];
+      if(!el)return;
+      const empty=!el.value.trim();
+      el.setAttribute('aria-invalid',empty?'true':'false');
+      if(empty)ok=false;
+    });
+    if(!ok){form.reportValidity?form.reportValidity():alert('Preencha os campos obrigatórios para enviar à avaliação.');return}
+    const nFotos=files.length;
+    const lines=[
+      'Olá! Gostaria de submeter uma casa para avaliação no portfólio Prime House.',
+      '',
+      'Imóvel',
+      `• Condomínio: ${val('condominio')}`,
+      `• Cidade/Bairro: ${val('cidade')}`,
+      `• Valor pretendido: ${val('valor')}`,
+      val('area')||val('terreno')?`• Área construída: ${val('area')||'—'}${val('terreno')?` · Terreno: ${val('terreno')}`:''}`:null,
+      (val('quartos')||val('suites'))?`• Quartos: ${val('quartos')||'—'} · Suítes: ${val('suites')||'—'}`:null,
+      val('vagas')?`• Vagas de garagem: ${val('vagas')}`:null,
+      '',
+      'Descrição',
+      val('descricao'),
+      '',
+      'Contato (em sigilo, não publicar no site)',
+      `• Nome: ${val('nome')}`,
+      `• WhatsApp: ${val('whatsapp')}`,
+      val('email')?`• E-mail: ${val('email')}`:null,
+      '',
+      nFotos?`Fotos: separei ${nFotos} ${nFotos===1?'imagem':'imagens'} e vou enviá-las em seguida nesta mesma conversa.`:'Fotos: ainda não anexei imagens; posso enviá-las nesta conversa.'
+    ].filter(x=>x!==null);
+    const text=lines.join('\n');
+    const blobs=files.map(f=>f.file);
+    let shared=false;
+    try{
+      if(nFotos&&navigator.canShare&&navigator.canShare({files:blobs})){
+        await navigator.share({title:'Casa para o portfólio Prime House',text,files:blobs});
+        shared=true;
+      }
+    }catch(err){if(err&&err.name==='AbortError')return;shared=false}
+    if(!shared){
+      window.open(wa(text),'_blank','noopener');
+    }
+    form.hidden=true;
+    if(done){
+      done.hidden=false;
+      if(doneMsg){
+        doneMsg.textContent=shared
+          ?'O resumo e as fotos foram oferecidos no compartilhamento do seu aparelho. Se a conversa com o corretor abriu, confira se as imagens foram anexadas.'
+          :(nFotos
+            ?`A conversa com o corretor foi aberta no WhatsApp com os dados da casa. Envie agora as ${nFotos} ${nFotos===1?'foto selecionada':'fotos selecionadas'} nesta mesma conversa para completar o pedido de avaliação.`
+            :'A conversa com o corretor foi aberta no WhatsApp com os dados da casa. Se quiser, envie as fotos nesta mesma conversa para a avaliação.');
+      }
+      done.scrollIntoView({block:'start',behavior:'smooth'});
+    }
+  });
+};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindOfferForm);
+else bindOfferForm();
 })();
