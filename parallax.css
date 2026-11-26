@@ -1,0 +1,155 @@
+/* Parallax editorial da Prime House + abertura cinematográfica.
+   Só transform e opacity no scroll. Sem background-attachment: fixed. */
+
+/* ---- primeira pintura: tela preta, sem flash do site ---- */
+html.ph-px-intro{background:#07080B}
+html.ph-px-intro body{background:#07080B;overflow:hidden}
+html.ph-px-intro body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:400;
+  background:#07080B;
+  pointer-events:auto;
+}
+html.ph-px-intro.ph-px-open-on body:before{opacity:0}
+html.ph-px-intro .site-header .brand-image{opacity:0!important;transition:none!important}
+html.ph-px-intro .registration-bubble,
+html.ph-px-intro .floating-whatsapp,
+html.ph-px-intro .reg-overlay{opacity:0!important;visibility:hidden;pointer-events:none!important}
+html.ph-px-intro .hero h1{animation:none;filter:none}
+
+.ph-open{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  pointer-events:auto;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.ph-open-bg{
+  position:absolute;
+  inset:0;
+  background:#07080B;
+}
+.ph-open-logo{
+  position:fixed;
+  z-index:2;
+  display:block;
+  height:auto;
+  transform-origin:0 0;
+  will-change:transform,opacity;
+  backface-visibility:hidden;
+  pointer-events:none;
+}
+.ph-open-cap{
+  position:fixed;
+  z-index:2;
+  left:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:min(720px,88vw);
+  transform:translateX(-50%);
+  text-align:center;
+  pointer-events:none;
+  will-change:opacity;
+}
+.ph-open-line{
+  width:88px;
+  height:1px;
+  background:#cfb681;
+  opacity:.95;
+  margin:0 0 22px;
+}
+.ph-open-desc{
+  margin:0;
+  color:#f3f0e9;
+  font-family:Georgia,"Palatino Linotype",Palatino,serif;
+  font-weight:400;
+  font-size:26px;
+  line-height:1.45;
+  letter-spacing:.015em;
+}
+@media (max-width:800px){
+  .ph-open-cap{width:min(100%,88vw)}
+  .ph-open-line{width:64px;margin-bottom:16px}
+  .ph-open-desc{font-size:19px;line-height:1.5;letter-spacing:.012em}
+}
+
+/* ---- parallax de rolagem ---- */
+.hero{overflow:hidden}
+.hero-photo{
+  animation:none;
+  will-change:transform;
+  transform:translate3d(0,0,0) scale(1.18);
+  transform-origin:100% 42%;
+  backface-visibility:hidden;
+}
+.hero-copy{backface-visibility:hidden}
+.ph-px-ready .hero h1{animation:none;filter:none;opacity:1}
+@media (max-width:800px){
+  .hero-photo{
+    transform:translate3d(0,0,0) scale(1.14);
+    transform-origin:50% 42%;
+  }
+}
+
+.ph-px-ready .card-media{overflow:hidden}
+.ph-px-ready .card-media img{
+  transition:none;
+  transform:translate3d(0,0,0) scale(1.16);
+  transform-origin:50% 48%;
+  backface-visibility:hidden;
+}
+.ph-px-ready .card:hover img{transform:translate3d(0,0,0) scale(1.16)}
+
+.ph-px-detail{
+  overflow:hidden;
+  width:100%;
+  background:#0e1311;
+}
+.ph-px-detail .detail-photo{
+  transform:translate3d(0,0,0) scale(1.14);
+  transform-origin:50% 50%;
+  backface-visibility:hidden;
+}
+
+.ph-px-ready .ph-px-reveal{
+  opacity:0;
+  transform:translate3d(0,28px,0);
+  transition:opacity .9s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1);
+}
+.ph-px-ready .ph-px-reveal.ph-px-in{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+.ph-px-ready .ph-px-reveal-fade{
+  opacity:0;
+  transition:opacity .9s cubic-bezier(.22,.61,.36,1);
+}
+.ph-px-ready .ph-px-reveal-fade.ph-px-in{opacity:1}
+
+@media (prefers-reduced-motion:reduce){
+  .hero-photo,
+  .hero-copy,
+  .ph-px-ready .card-media img,
+  .ph-px-ready .card:hover img,
+  .ph-px-detail .detail-photo,
+  .ph-px-ready .ph-px-reveal,
+  .ph-px-ready .ph-px-reveal.ph-px-in,
+  .ph-px-ready .ph-px-reveal-fade,
+  .ph-px-ready .ph-px-reveal-fade.ph-px-in,
+  .ph-open-logo,
+  .ph-open-cap,
+  .ph-open-bg{
+    animation:none!important;
+    transition:none!important;
+    transform:none!important;
+    opacity:1!important;
+    will-change:auto;
+  }
+  html.ph-px-intro body:before,
+  .ph-open{display:none!important}
+  html.ph-px-intro .site-header .brand-image{opacity:1!important}
+}

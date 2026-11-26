@@ -91,6 +91,57 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 const houses=()=>(typeof CASAS!=='undefined'?CASAS:[]);
 const condName=c=>c.cond;
 const cardHTML=c=>`<article class="card"><a class="card-media" href="casa.html?id=${encodeURIComponent(c.id)}"><img src="${esc(c.img[0])}" alt="Fachada da casa no ${esc(c.cond)}" loading="lazy"><span class="tag">${esc(c.cond)}</span></a><div class="card-body"><div class="location">${esc(c.cidade)}${c.bairro&&c.bairro!=='Centro'?' · '+esc(c.bairro):''}</div><h3>${esc(c.cond)} · ${c.q} quartos</h3><div class="specs">${c.area?`<span>${I.area}${m2(c.area)} m²</span>`:''}<span>${I.bed}${suites(c)}</span><span>${I.car}${vagas(c)}</span></div><div class="card-bottom"><div class="price">${brl(c.valor)}</div><a href="casa.html?id=${encodeURIComponent(c.id)}" class="text-link">Conhecer a casa</a></div></div></article>`;
+
+const starsRow=(c)=>{
+ if(typeof c.googleRating!=='number'||!c.googleReviewsCount)return '';
+ const r=c.googleRating, n=Math.round(r), label=String(r).replace('.',',');
+ let s='';
+ for(let i=1;i<=5;i++) s+=i<=n?'★':'☆';
+ const q=c.googleReviewsCount===1?'avaliação':'avaliações';
+ return `<div class="g-rating" title="Avaliações no Google"><span class="g-stars" aria-hidden="true">${s}</span><strong>${label}</strong><span class="g-count">${c.googleReviewsCount.toLocaleString('pt-BR')} ${q} no Google</span></div>`;
+};
+const reviewCard=r=>{
+ const n=Math.round(Number(r.estrelas)||0);
+ let s='';
+ for(let i=1;i<=5;i++) s+=i<=n?'★':'☆';
+ return `<figure class="g-review"><div class="g-review-top"><strong>${esc(r.nome)}</strong><span class="g-stars" aria-label="${n} de 5 estrelas">${s}</span></div><blockquote>${esc(r.texto)}</blockquote></figure>`;
+};
+const reviewsBlock=c=>{
+ if(typeof c.googleRating!=='number'||!c.googleReviewsCount)return `<section class="g-reviews"><h3>Avaliações no Google</h3><p>Não encontramos avaliações acessíveis deste condomínio no Google.</p></section>`;
+ const list=(c.googleReviews||[]).map(reviewCard).join('');
+ const nota=c.googleReviewsNota?`<p class="g-note">${esc(c.googleReviewsNota)}</p>`:'';
+ const empty=!list?`<p>A nota média está disponível, mas não localizamos comentários de visitantes que pudéssemos reproduzir com nome e texto fiéis.</p>`:'';
+ return `<section class="g-reviews"><h3>Avaliações no Google</h3>${starsRow(c)}${c.googlePlace?`<p class="g-place">Referente ao lugar “${esc(c.googlePlace)}” no Google.</p>`:''}${list?`<div class="g-review-list">${list}</div>`:empty}${nota}<p class="g-note">Comentários reais de visitantes no Google, reproduzidos fielmente. A nota média considera o total de avaliações do lugar.</p></section>`;
+};
+const amenityBlock=(title,arr)=>arr&&arr.length?`<div class="amenity-col"><h3>${esc(title)}</h3><ul class="amenity-list">${arr.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'';
+const photosBlock=c=>{
+ const fotos=c.fotosAreasComuns||[];
+ if(!fotos.length)return '';
+ return `<div class="condo-photos">${fotos.map((f,i)=>`<button type="button" data-lx="${i}" aria-label="${esc(f.legenda||'Ampliar foto')}"><img src="${esc(f.src)}" alt="${esc(f.legenda||('Área comum do '+c.nome))}" loading="lazy"><span>${esc(f.legenda||'')}</span></button>`).join('')}</div>`;
+};
+const openCondoLightbox=(fotos,start)=>{
+ let i=start||0;
+ const box=document.createElement('div');
+ box.className='lightbox on';
+ box.setAttribute('role','dialog');
+ box.setAttribute('aria-modal','true');
+ const img=document.createElement('img');
+ const cap=document.createElement('p');
+ cap.className='lx-cap';
+ const show=()=>{img.src=fotos[i].src;img.alt=fotos[i].legenda||'';cap.textContent=fotos[i].legenda||'';};
+ const close=()=>{box.remove();document.removeEventListener('keydown',onKey);};
+ const onKey=e=>{if(e.key==='Escape')close();if(e.key==='ArrowRight'){i=(i+1)%fotos.length;show()}if(e.key==='ArrowLeft'){i=(i-1+fotos.length)%fotos.length;show()}};
+ box.innerHTML='<button class="lx" type="button" aria-label="Fechar">×</button><button class="lp" type="button" aria-label="Anterior">‹</button><button class="ln" type="button" aria-label="Seguinte">›</button>';
+ box.appendChild(img);box.appendChild(cap);
+ box.querySelector('.lx').onclick=close;
+ box.querySelector('.lp').onclick=()=>{i=(i-1+fotos.length)%fotos.length;show()};
+ box.querySelector('.ln').onclick=()=>{i=(i+1)%fotos.length;show()};
+ box.addEventListener('click',e=>{if(e.target===box)close()});
+ document.addEventListener('keydown',onKey);
+ document.body.appendChild(box);
+ show();
+};
+
 const condList=()=>{const H=houses();const used=new Set();
  const base=(typeof CONDS!=='undefined'?CONDS:[]).map(c=>{const hs=H.filter(h=>(c.casas||[]).includes(h.cond)).sort((a,b)=>a.valor-b.valor);hs.forEach(h=>used.add(h.id));return {...c,_houses:hs}});
  const extra={};H.filter(h=>!used.has(h.id)).forEach(h=>{(extra[h.cond]=extra[h.cond]||{id:null,nome:h.cond,cidade:h.cidade,bairro:h.bairro,resumo:'',_houses:[]})._houses.push(h)});
@@ -98,8 +149,9 @@ const condList=()=>{const H=houses();const used=new Set();
  return [...base,...Object.values(extra)].sort((a,b)=>(b._houses.length>0)-(a._houses.length>0)||(ord[a.cidade]??9)-(ord[b.cidade]??9)||b._houses.length-a._houses.length||a.nome.localeCompare(b.nome,'pt-BR'))};
 const houseLine=h=>{const d=String(h.nome||'').split(' · ').slice(1).join(' · ')||`casa de ${h.q} quartos`;return `<li><a href="casa.html?id=${encodeURIComponent(h.id)}"><span>${esc(h.cond)} · ${esc(d)}</span><strong>${brl(h.valor)}</strong></a></li>`};
 const condoHTML=(c,full)=>{const n=c._houses.length,cn=n?c._houses[0].cond:c.nome,lim=full?n:4;const title=c.id?`<a href="condominio.html?id=${c.id}">${esc(c.nome)}</a>`:esc(c.nome);
+ const cover=(c.fotosAreasComuns&&c.fotosAreasComuns[0])?`<a class="condo-cover" href="condominio.html?id=${c.id}"><img src="${esc(c.fotosAreasComuns[0].src)}" alt="${esc(c.fotosAreasComuns[0].legenda||('Área comum do '+c.nome))}" loading="lazy"></a>`:'';
  const list=n?`<div class="condo-houses-t">Casas disponíveis aqui · ${n}</div><ul class="condo-houses">${c._houses.slice(0,lim).map(houseLine).join('')}</ul>${n>lim?`<a class="text-link" href="condominio.html?id=${c.id}">Ver as ${n} casas</a>`:''}`:`<p>Sem casas no nosso catálogo no momento.</p><a class="btn secondary" href="${wa(`Olá! Quero uma casa no condomínio ${c.nome}.`)}" target="_blank" rel="noreferrer">Quero uma casa aqui</a>`;
- return `<article class="condo"><div class="location">${esc(c.cidade)}${c.bairro?' · '+esc(c.bairro):''}</div><h3>${title}</h3><p>${esc(c.resumo||'Registre seu interesse para receber atendimento e buscar uma casa neste condomínio.')}</p>${list}<div class="condo-links">${c.maps?`<a class="text-link" href="${c.maps}" target="_blank" rel="noreferrer">Ver no Google Maps</a>`:''}${c.id?`<a class="text-link" href="condominio.html?id=${c.id}">Conhecer o condomínio</a>`:''}</div>${c.resumo?'<p style="font-size:12px">Informações do material dos imóveis.</p>':''}</article>`};
+ return `<article class="condo">${cover}<div class="condo-body"><div class="location">${esc(c.cidade)}${c.bairro?' · '+esc(c.bairro):''}</div><h3>${title}</h3>${starsRow(c)}<p>${esc(c.resumo||'Registre seu interesse para receber atendimento e buscar uma casa neste condomínio.')}</p>${list}<div class="condo-links">${c.maps?`<a class="text-link" href="${c.maps}" target="_blank" rel="noreferrer">Ver no Google Maps</a>`:''}${c.id?`<a class="text-link" href="condominio.html?id=${c.id}">Conhecer o condomínio</a>`:''}</div>${c.resumo?'<p style="font-size:12px">Informações do material dos imóveis.</p>':''}</div></article>`};
 // ---------- mapa (Leaflet, no estilo do HomeTrack, paleta Prime House) ----------
 const curtoPreco=v=>{
   if(v>=1e6){const n=v/1e6;let s;if(n>=10)s=String(Math.round(n));
@@ -171,5 +223,5 @@ const mountMiniMap=(elId,target)=>{
   setTimeout(()=>m.invalidateSize(),200);
   return m;
 };
-window.PH={houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,condoHTML,condList,houses,coordsOf,pintaMapa,initVitrineMap,mountMiniMap,curtoPreco};
+window.PH={houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,condoHTML,condList,houses,coordsOf,pintaMapa,initVitrineMap,mountMiniMap,curtoPreco,starsRow,reviewsBlock,amenityBlock,photosBlock,openCondoLightbox};
 })();

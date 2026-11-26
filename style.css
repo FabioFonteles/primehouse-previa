@@ -279,7 +279,7 @@ button:disabled{opacity:.6;cursor:wait}
 @media (prefers-reduced-motion:reduce){.reg-overlay,.reg-modal,.lightbox.on{animation:none}}
 .registration-bubble[hidden]{display:none}
 @media (min-width:801px){.stats{grid-template-columns:repeat(var(--n,5),1fr)}}
-.condo{display:flex;flex-direction:column}
+.condo{display:flex;flex-direction:column;overflow:hidden}
 .condo .condo-houses-t{color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-size:12px;margin-top:6px}
 .condo-houses{list-style:none;padding:0;margin:10px 0 14px;border-top:1px solid var(--border)}
 .condo-houses li{border-bottom:1px solid var(--border)}
@@ -337,4 +337,43 @@ button:disabled{opacity:.6;cursor:wait}
 @media (max-width:800px){
   .map-canvas{height:360px}
   .map-canvas-detail{height:280px}
+}
+
+/* Áreas comuns, estrelas e avaliações do Google */
+.condo-cover{display:block;margin:-27px -27px 18px;overflow:hidden;border-bottom:1px solid var(--border)}
+.condo-cover img{width:100%;height:168px;object-fit:cover;display:block;transition:transform .7s}
+.condo-cover:hover img{transform:scale(1.04)}
+.condo-body{display:flex;flex-direction:column;flex:1}
+.g-rating{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 0;font-size:14px}
+.g-stars{color:var(--gold);letter-spacing:1px;font-size:16px;line-height:1}
+.g-rating strong{color:#e4cf9f;font-family:Georgia,serif;font-size:18px;font-weight:400}
+.g-count,.g-place{color:var(--muted);font-size:13px}
+.g-place{margin:6px 0 16px}
+.condo-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0 34px}
+.condo-photos button{padding:0;border:0;background:0 0;overflow:hidden;position:relative;text-align:left;cursor:zoom-in}
+.condo-photos img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .7s}
+.condo-photos button:hover img{transform:scale(1.04)}
+.condo-photos span{display:block;color:var(--muted);font-size:12px;padding:8px 0 0}
+.amenity-block{margin:28px 0 36px}
+.amenity-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.amenity-list{list-style:none;padding:0;margin:10px 0 0;border-top:1px solid var(--border)}
+.amenity-list li{border-bottom:1px solid var(--border);padding:9px 0;color:#d0d3ca;font-size:14px}
+.g-reviews{margin:10px 0 36px;padding:22px 0 0;border-top:1px solid var(--border)}
+.g-review-list{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}
+.g-review{margin:0;border:1px solid var(--border);background:#1b221e;padding:18px 18px 16px}
+.g-review-top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.g-review-top strong{font-weight:400;font-size:14px}
+.g-review blockquote{margin:0;color:#c2c9bf;font-size:14px;line-height:1.55}
+.g-note{color:var(--muted);font-size:12px;margin:14px 0 0}
+.detail{padding-bottom:180px}
+@media (max-width:800px){.detail{padding-bottom:240px}}
+.lightbox .lx-cap{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:#f3f0e9;font-size:13px;max-width:80vw;text-align:center;margin:0}
+@media (max-width:800px){
+  .amenity-grid,.g-review-list{grid-template-columns:1fr}
+  .condo-photos{grid-template-columns:1fr 1fr}
+  .condo-photos img{height:150px}
+  .condo-cover img{height:150px}
+}
+@media (max-width:480px){
+  .condo-photos{grid-template-columns:1fr}
 }
