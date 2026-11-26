@@ -165,9 +165,41 @@ document.body.insertAdjacentHTML('afterbegin',header);
 })();
 
 
+// ---------- cadastro para favoritos + balão de convite ----------
+const LS_LEAD='primehouse_lead_profile';
+const getLeadProfile=()=>{
+  try{
+    const o=JSON.parse(localStorage.getItem(LS_LEAD)||'null');
+    return o&&typeof o==='object'&&typeof o.name==='string'?o:null;
+  }catch(e){return null}
+};
+const hasLeadProfile=()=>{
+  const o=getLeadProfile();
+  if(!o)return false;
+  const tel=String(o.tel||'').replace(/\D/g,'');
+  return String(o.name||'').trim().length>=2&&tel.length>=8;
+};
+const saveLeadProfile=p=>{
+  const prev=getLeadProfile()||{};
+  const next={
+    name:String(p.name||'').trim(),
+    tel:String(p.tel||'').trim(),
+    savedAt:p.savedAt||prev.savedAt||new Date().toISOString()
+  };
+  try{localStorage.setItem(LS_LEAD,JSON.stringify(next))}catch(e){}
+  return next;
+};
+const leadFirstName=()=>{
+  const n=(getLeadProfile()||{}).name||'';
+  return n.trim().split(/\s+/)[0]||n.trim();
+};
+
+let pendingFav=null, regMode='convite', regSource='convite';
+let openReg=null, closeReg=null;
+const attachLeadAPI=()=>{if(!window.PH)return;PH.openReg=openReg;PH.closeReg=closeReg;PH.getLeadProfile=getLeadProfile;PH.hasLeadProfile=hasLeadProfile;PH.saveLeadProfile=saveLeadProfile;PH.leadFirstName=leadFirstName;PH.LS_LEAD=LS_LEAD};
+
 const ready=()=>{document.body.insertAdjacentHTML('beforeend',footer);
-// ---------- convite de cadastro (modal + balão), como no modelo ----------
-const modal=`<div class="reg-overlay" id="reg" role="dialog" aria-modal="true" aria-labelledby="reg-t"><div class="reg-modal"><button class="reg-close" type="button" aria-label="Fechar" data-regclose>×</button><div><h2 id="reg-t">Vamos encontrar sua casa?</h2><form id="reg-f"><label for="reg-n">Seu nome</label><input id="reg-n" autocomplete="name" required minlength="2"><label for="reg-w">WhatsApp com DDD</label><input id="reg-w" inputmode="tel" autocomplete="tel" placeholder="(91) 99999-9999"><label class="checkrow"><input type="checkbox" id="reg-c"> Quero receber novidades sobre imóveis pelo WhatsApp.</label><p class="fine">Salvaremos seus interesses para atender sua busca. Você pode solicitar correção ou exclusão pelo nosso WhatsApp.</p><button class="btn" type="submit">Salvar e continuar</button><button class="btn secondary" type="button" data-regclose>Continuar sem cadastro</button></form></div><p class="side">O cadastro é opcional. Deixe seu nome e WhatsApp para salvar seus interesses e receber nossa ajuda na busca.</p></div></div>`;
+const modal=`<div class="reg-overlay" id="reg" role="dialog" aria-modal="true" aria-labelledby="reg-t"><div class="reg-modal"><button class="reg-close" type="button" aria-label="Fechar" data-regclose>×</button><h2 id="reg-t">Salve suas casas favoritas</h2><p class="side" id="reg-side">Informe seu nome e WhatsApp para guardar suas casas favoritas.</p><form id="reg-f" autocomplete="on"><label for="reg-n">Nome completo</label><input id="reg-n" type="text" name="name" autocomplete="name" required minlength="2" placeholder="Seu nome"><label for="reg-w">WhatsApp com DDD</label><input id="reg-w" type="tel" name="tel" autocomplete="tel" inputmode="tel" required placeholder="(91) 99999-9999"><button class="btn" type="submit" id="reg-submit">Salvar nos favoritos</button><button class="btn secondary" type="button" data-regclose id="reg-skip">Agora não</button></form></div></div>`;
 const bubble=`<div class="registration-bubble" id="bub" hidden><button class="registration-bubble-content" type="button" data-cadastro>${I.msg.replace('width="16" height="16"','width="20" height="20"')}<span><span class="registration-bubble-title">Encontre sua casa com nossa ajuda</span><span>Cadastre-se para uma busca mais personalizada.</span><span class="registration-bubble-action">Quero me cadastrar →</span></span></button><button class="registration-bubble-close" type="button" aria-label="Fechar convite" id="bubx">×</button></div>`;
 document.body.insertAdjacentHTML('beforeend',modal+bubble);
 const reg=document.getElementById('reg'),bub=document.getElementById('bub');
@@ -175,6 +207,7 @@ const ss=(k,v)=>{try{return v===undefined?sessionStorage.getItem(k):sessionStora
 const introOn=()=>document.documentElement.classList.contains('ph-px-intro')||!!document.querySelector('.ph-open');
 let bubHideT=0;
 const showBub=()=>{
+  if(hasLeadProfile())return;
   if(ss('ph-balao')==='0'||document.body.dataset.noinvite)return;
   if(reg.classList.contains('on'))return;
   clearTimeout(bubHideT);
@@ -190,25 +223,93 @@ const hideBub=(immediate)=>{
   clearTimeout(bubHideT);
   bubHideT=setTimeout(finish,1100);
 };
-const openReg=()=>{reg.classList.add('on');hideBub();setTimeout(()=>document.getElementById('reg-n').focus(),50)};
-const closeReg=()=>{reg.classList.remove('on');ss('ph-convite','1');if(ss('ph-balao')!=='0')showBub()};
-document.addEventListener('click',e=>{if(e.target.closest('[data-cadastro]')){e.preventDefault();openReg()}if(e.target.closest('[data-regclose]')||e.target===reg)closeReg()});
+const fillRegForm=()=>{
+  const o=getLeadProfile()||{};
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||''};
+  set('reg-n',o.name);set('reg-w',o.tel);
+};
+const paintReg=()=>{
+  const t=document.getElementById('reg-t');
+  const side=document.getElementById('reg-side');
+  const sub=document.getElementById('reg-submit');
+  const skip=document.getElementById('reg-skip');
+  const subTxt='Informe seu nome e WhatsApp para guardar suas casas favoritas.';
+  if(regMode==='favoritos'){
+    const fromCasa=regSource==='casa';
+    if(t)t.textContent=fromCasa?'Salve esta casa nos seus favoritos':'Salve suas casas favoritas';
+    if(side)side.textContent=subTxt;
+    if(sub)sub.textContent='Salvar nos favoritos';
+    if(skip)skip.hidden=true;
+  }else if(regMode==='editar'){
+    if(t)t.textContent='Atualizar seus dados';
+    if(side)side.textContent='Atualize seu nome e WhatsApp.';
+    if(sub)sub.textContent='Salvar alterações';
+    if(skip){skip.hidden=false;skip.textContent='Fechar'}
+  }else{
+    if(t)t.textContent='Salve suas casas favoritas';
+    if(side)side.textContent=subTxt;
+    if(sub)sub.textContent='Salvar nos favoritos';
+    if(skip){skip.hidden=false;skip.textContent='Agora não'}
+  }
+};
+openReg=(opts={})=>{
+  regSource=opts.source||'convite';
+  regMode=opts.mode||(hasLeadProfile()?'editar':'convite');
+  pendingFav=opts.pendingFav||null;
+  if(pendingFav&&!hasLeadProfile())regMode='favoritos';
+  if(pendingFav&&hasLeadProfile())regMode=opts.mode||'favoritos';
+  fillRegForm();
+  paintReg();
+  reg.classList.add('on');
+  hideBub();
+  setTimeout(()=>{const n=document.getElementById('reg-n');if(n)n.focus()},50);
+};
+closeReg=()=>{
+  reg.classList.remove('on');
+  pendingFav=null;
+  ss('ph-convite','1');
+  if(!hasLeadProfile()&&ss('ph-balao')!=='0')showBub();
+};
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-cadastro]')){
+    e.preventDefault();
+    openReg({mode:hasLeadProfile()?'editar':'convite'});
+  }
+  if(e.target.closest('[data-regclose]')||e.target===reg)closeReg();
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&reg.classList.contains('on'))closeReg()});
 document.getElementById('bubx').onclick=()=>{ss('ph-balao','0');hideBub()};
-document.getElementById('reg-f').addEventListener('submit',e=>{e.preventDefault();
- const n=document.getElementById('reg-n').value.trim(),w=document.getElementById('reg-w').value.trim(),c=document.getElementById('reg-c').checked;
- let t=`Olá! Meu nome é ${n}.${w?` Meu WhatsApp: ${w}.`:''} Quero ajuda para encontrar uma casa em condomínio fechado.`;
- if(c)t+=' Quero receber novidades sobre imóveis pelo WhatsApp.';
- window.open(wa(t),'_blank','noopener');ss('ph-balao','0');hideBub(true);closeReg()});
-if(!document.body.dataset.noinvite&&ss('ph-balao')!=='0'){
+document.getElementById('reg-f').addEventListener('submit',e=>{
+  e.preventDefault();
+  const n=document.getElementById('reg-n').value.trim();
+  const w=document.getElementById('reg-w').value.trim();
+  if(n.length<2||w.replace(/\D/g,'').length<8)return;
+  const wasNew=!hasLeadProfile();
+  const toSave=pendingFav;
+  saveLeadProfile({name:n,tel:w});
+  ss('ph-balao','0');
+  hideBub(true);
+  const mode=regMode;
+  pendingFav=null;
+  reg.classList.remove('on');
+  if(toSave&&window.PH&&typeof PH.toggleFav==='function')PH.toggleFav(toSave, {force:true, added:true, silent:true});
+  if(window.PH&&typeof PH.onLeadSaved==='function')PH.onLeadSaved({wasNew,savedHouse:toSave,mode});
+  else if(window.PH&&typeof PH.toast==='function'){
+    PH.toast(toSave&&wasNew?'Cadastro concluído! Casa salva nos seus favoritos.':(mode==='editar'?'Dados atualizados.':'Cadastro concluído!'));
+  }
+});
+if(!document.body.dataset.noinvite&&ss('ph-balao')!=='0'&&!hasLeadProfile()){
   const kick=()=>{if(!reg.classList.contains('on'))showBub()};
   const waitIntro=()=>{if(introOn()){requestAnimationFrame(waitIntro);return}setTimeout(kick,800)};
   if(introOn())waitIntro();
   else setTimeout(kick,1100);
 }
+attachLeadAPI();
 
 };
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready);else ready();
+
 // ---------- utilitários de dados ----------
 const houses=()=>(typeof CASAS!=='undefined'?CASAS:[]);
 const condName=c=>c.cond;
@@ -373,6 +474,9 @@ const houseHasItem=(h,key)=>{
     if(/semi[\s-]?mobiliad/.test(blob))return false;
     return /\bmobiliad/.test(blob);
   }
+  if(key==='solar'){
+    return /(?:placas?|painel|paineis)[\s-]+solar(?:es)?|energia[\s-]+solar|fotovoltaic/.test(blob);
+  }
   return false;
 };
 const INVEST={min:690000,max:9200000,step:5000};
@@ -386,7 +490,8 @@ const curtoFaixa=v=>{
 };
 const faixaLabel=(a,b)=>curtoFaixa(a)+' – '+curtoFaixa(b);
 
-window.PH={houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,cardMedia,cardActions,photoList,condoHTML,condList,houses,coordsOf,pintaMapa,initVitrineMap,mountMiniMap,curtoPreco,starsRow,reviewsBlock,amenityBlock,photosBlock,openCondoLightbox,houseHasItem,INVEST,curtoFaixa,faixaLabel};
+window.PH=Object.assign(window.PH||{},{houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,cardMedia,cardActions,photoList,condoHTML,condList,houses,coordsOf,pintaMapa,initVitrineMap,mountMiniMap,curtoPreco,starsRow,reviewsBlock,amenityBlock,photosBlock,openCondoLightbox,houseHasItem,INVEST,curtoFaixa,faixaLabel,LS_LEAD,getLeadProfile,hasLeadProfile,saveLeadProfile,leadFirstName});
+attachLeadAPI();
 
 /* ---- vitrine: parallax no hover + troca suave de fotos ao permanecer ---- */
 (()=>{

@@ -76,9 +76,14 @@
       const on=favs.indexOf(b.getAttribute('data-fav'))!==-1;
       b.setAttribute('aria-pressed',on?'true':'false');
       b.classList.toggle('is-on',on);
-      const lab=on?'Remover dos favoritos':'Salvar nos favoritos';
+      const isInterest=b.classList.contains('ph-interest');
+      const lab=isInterest
+        ?(on?'Salva nos favoritos':'Tenho interesse nesta casa')
+        :(on?'Remover dos favoritos':'Salvar nos favoritos');
       b.setAttribute('aria-label',lab);
       b.setAttribute('title',lab);
+      const span=b.querySelector('.ph-fav-label');
+      if(span)span.textContent=isInterest?(on?'Salva nos favoritos':'Tenho interesse nesta casa'):(on?'Salva nos favoritos':'Favoritar');
     });
     document.querySelectorAll('[data-cmp]').forEach(b=>{
       const on=cmps.indexOf(b.getAttribute('data-cmp'))!==-1;
@@ -96,13 +101,146 @@
     renderBar();
   };
 
-  const toggleFav=id=>{
+  const hasLead=()=>window.PH&&typeof PH.hasLeadProfile==='function'&&PH.hasLeadProfile();
+  const requestLead=(id,source)=>{
+    if(window.PH&&typeof PH.openReg==='function')PH.openReg({mode:'favoritos',pendingFav:id,source:source||'vitrine'});
+    else{
+      const ev=new CustomEvent('ph-need-lead',{detail:{pendingFav:id,source:source||'vitrine'}});
+      document.dispatchEvent(ev);
+    }
+  };
+
+  const curtoMoney=v=>{
+    if(window.PH&&typeof PH.curtoPreco==='function')return PH.curtoPreco(v);
+    if(v>=1e6){
+      const n=v/1e6;let s;
+      if(n>=10)s=String(Math.round(n));
+      else if(Math.abs(n-Math.round(n*10)/10)<0.02)s=(Math.round(n*10)/10).toFixed(1).replace('.',',').replace(/,0$/,'');
+      else s=(Math.round(n*100)/100).toFixed(2).replace('.',',').replace(/0$/,'');
+      return 'R$ '+s+' mi';
+    }
+    return 'R$ '+Math.round(v/1e3)+' mil';
+  };
+  const rangeLabel=(arr,sing,plur)=>{
+    const xs=(arr||[]).map(Number).filter(n=>n>0);
+    if(!xs.length)return '';
+    const a=Math.min(...xs),b=Math.max(...xs);
+    if(a===b)return a+' '+(a===1?sing:plur);
+    return a+' a '+b+' '+plur;
+  };
+  const houseHas=(h,key)=>window.PH&&typeof PH.houseHasItem==='function'&&PH.houseHasItem(h,key);
+  const computeInferredProfile=(favIds)=>{
+    const list=(favIds||[]).map(byId).filter(Boolean);
+    const empty={condominios:[],locais:[],faixaInvestimento:'',valorMin:null,valorMax:null,suites:'',quartos:'',itens:[],casas:[],casasTexto:'',resumo:''};
+    if(!list.length)return empty;
+    const condominios=[...new Set(list.map(h=>h.cond).filter(Boolean))];
+    const locais=[...new Set(list.map(h=>[h.cidade,h.bairro&&h.bairro!=='Centro'?h.bairro:''].filter(Boolean).join(' · ')).filter(Boolean))];
+    const valores=list.map(h=>+h.valor).filter(v=>v>0);
+    const valorMin=valores.length?Math.min(...valores):null;
+    const valorMax=valores.length?Math.max(...valores):null;
+    const faixaInvestimento=!valores.length?'':(valorMin===valorMax?curtoMoney(valorMin):curtoMoney(valorMin)+' a '+curtoMoney(valorMax));
+    const suites=rangeLabel(list.map(h=>h.s),'suíte','suítes');
+    const quartos=rangeLabel(list.map(h=>h.q),'quarto','quartos');
+    const vagas=rangeLabel(list.map(h=>h.vagas),'vaga','vagas');
+    const counts={};
+    const bump=(label,set)=>{if(set.has(label))return;set.add(label);counts[label]=(counts[label]||0)+1};
+    list.forEach(h=>{
+      const seen=new Set();
+      if(houseHas(h,'piscina')||/piscina/i.test([h.nome,h.desc,...(h.dif||[])].join(' ')))bump('Piscina',seen);
+      const blob=[h.nome,h.desc,...(h.dif||[])].join(' ');
+      if(houseHas(h,'solar')||/(?:placas?|painel|paineis)[\s-]+solar(?:es)?|energia[\s-]+solar|fotovoltaic/i.test(blob))bump('Placa solar',seen);
+      if(houseHas(h,'closet')||/\bclosets?\b/i.test(blob))bump('Closet',seen);
+      if(houseHas(h,'sauna')||/\bsaunas?\b/i.test(blob))bump('Sauna',seen);
+      if(houseHas(h,'mobiliado'))bump('Mobiliado',seen);
+      if(/gourmet/i.test(blob))bump('Gourmet',seen);
+    });
+    const minC=list.length<=1?1:(list.length===2?2:Math.ceil(list.length/2));
+    const itens=Object.entries(counts).filter(([,n])=>n>=minC).map(([k])=>k);
+    if(vagas)itens.push(vagas);
+    const casas=list.map(h=>({id:h.id,cond:h.cond,brief:houseBrief(h),valor:h.valor,valorTxt:brl(h.valor),linha:houseLineTxt(h),url:casaAbs(h.id)}));
+    const casasTexto=casas.map(c=>'• '+c.linha+(c.url?'\n  '+c.url:'')).join('\n');
+    const bits=[];
+    if(faixaInvestimento)bits.push('Faixa: '+faixaInvestimento);
+    if(condominios.length)bits.push('Condomínios: '+condominios.join(', '));
+    if(locais.length)bits.push('Região: '+locais.join(', '));
+    if(suites)bits.push(suites);
+    else if(quartos)bits.push(quartos);
+    if(itens.length)bits.push('Itens: '+itens.join(', '));
+    return {condominios,locais,faixaInvestimento,valorMin,valorMax,suites,quartos,itens,casas,casasTexto,resumo:bits.join(' · ')};
+  };
+
+  /* URL do Google Apps Script (Web App). Fica vazia até a publicação do endpoint. */
+  const LEAD_WEBHOOK_URL='https://script.google.com/macros/s/AKfycbyMkTnBCnD6GonRhTmrCl2jD9Bl2SQ0XLgFXII865Erj57GGpNRMLeY4qx3egyi5iu7/exec';
+  const eventLabel=t=>({cadastro:'Cadastro',favoritou:'Favoritou',removeu:'Removeu'}[t]||t);
+  const belemNow=()=>{
+    try{
+      return new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Belem',dateStyle:'short',timeStyle:'medium'}).format(new Date());
+    }catch(e){return new Date().toLocaleString('pt-BR')}
+  };
+  const buildLeadPayload=(eventType,houseObj)=>{
+    const lead=(window.PH&&PH.getLeadProfile&&PH.getLeadProfile())||{};
+    const profile=computeInferredProfile(favs);
+    const h=houseObj||null;
+    return {
+      event:eventLabel(eventType),
+      eventType,
+      datetimeBelem:belemNow(),
+      at:new Date().toISOString(),
+      name:lead.name||'',
+      tel:lead.tel||'',
+      house:h?houseLineTxt(h):'',
+      condo:h?h.cond||'':'',
+      valor:h?brl(h.valor):'',
+      favCount:favs.length,
+      profile:profile.resumo,
+      faixa:profile.faixaInvestimento,
+      condominios:profile.condominios.join(', '),
+      suites:profile.suites||profile.quartos||'',
+      itens:(profile.itens||[]).join(', '),
+      favs:profile.casasTexto,
+      page:location.href||'',
+      inferred:profile
+    };
+  };
+  const sendLeadActivity=(eventType,houseObj)=>{
+    const lead=(window.PH&&PH.getLeadProfile&&PH.getLeadProfile())||null;
+    if(!lead||!lead.name||!lead.tel)return;
+    const payload=buildLeadPayload(eventType,houseObj);
+    const url=LEAD_WEBHOOK_URL;
+    if(!url)return payload;
+    const body=JSON.stringify(payload);
+    try{
+      if(navigator.sendBeacon){
+        const blob=new Blob([body],{type:'text/plain;charset=UTF-8'});
+        navigator.sendBeacon(url,blob);
+      }else{
+        fetch(url,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=UTF-8'},body});
+      }
+    }catch(e){}
+    return payload;
+  };
+
+  const toggleFav=(id, opts={})=>{
     if(!byId(id))return;
     const i=favs.indexOf(id);
-    if(i===-1)favs.push(id); else favs.splice(i,1);
+    const adding=opts.added?true:i===-1;
+    if(adding&&i===-1&&!opts.force&&!hasLead()){
+      requestLead(id, opts.source);
+      return false;
+    }
+    if(opts.added){
+      if(i===-1)favs.push(id);
+    }else if(i===-1)favs.push(id);
+    else favs.splice(i,1);
     save(LS_FAV,favs);
     syncButtons();
     if($('ph-favs')&&$('ph-favs').classList.contains('on'))renderFavs();
+    if(!opts.silent){
+      const h=byId(id);
+      if(adding)sendLeadActivity('favoritou',h);
+      else sendLeadActivity('removeu',h);
+    }
+    return true;
   };
   const toggleCmp=id=>{
     if(!byId(id))return;
@@ -189,7 +327,21 @@
     return wa(lines.join('\n'));
   };
   const waFavs=list=>{
-    const lines=['Olá! Separei estas casas nos meus favoritos da Prime House e gostaria de agendar uma visita:','',...list.map(h=>'• '+houseLineTxt(h)+'\n  '+casaAbs(h.id)),'','Pode me orientar?']
+    const lead=(window.PH&&PH.getLeadProfile&&PH.getLeadProfile())||null;
+    const profile=computeInferredProfile((list||[]).map(h=>h.id));
+    const head=[];
+    if(lead&&lead.name){
+      head.push('Olá! Meu nome é '+lead.name+'.');
+      if(lead.tel)head.push('Meu WhatsApp: '+lead.tel+'.');
+    }else{
+      head.push('Olá!');
+    }
+    if(profile.resumo){
+      head.push('Pelo que separei nos favoritos, este é o meu interesse:');
+      head.push(profile.resumo);
+    }
+    head.push('Separei estas casas nos meus favoritos da Prime House e gostaria de agendar uma visita:','');
+    const lines=[...head,...list.map(h=>'• '+houseLineTxt(h)+'\n  '+casaAbs(h.id)),'','Pode me orientar?'];
     return wa(lines.join('\n'));
   };
 
@@ -222,16 +374,23 @@
     renderFavs();
     openModal('ph-favs');
   };
+  const favHello=()=>{
+    if(!(window.PH&&PH.hasLeadProfile&&PH.hasLeadProfile()))return '';
+    const nome=(PH.leadFirstName&&PH.leadFirstName())||((PH.getLeadProfile()||{}).name||'');
+    if(!nome)return '';
+    return `<p class="ph-fav-hello">Olá, ${esc(nome)} · <button type="button" class="ph-edit-lead" data-edit-lead>Editar dados</button></p>`;
+  };
   const renderFavs=()=>{
     const list=favs.map(byId).filter(Boolean);
     const box=$('ph-fav-list');
     if(!box)return;
+    const hello=favHello();
     if(!list.length){
-      box.innerHTML='<p class="ph-empty">Nenhuma casa salva no momento.</p>';
+      box.innerHTML=hello+'<p class="ph-empty">Nenhuma casa salva no momento.</p>';
       $('ph-fav-cta').innerHTML='';
       return;
     }
-    box.innerHTML=list.map(h=>`<article class="ph-fav-item">
+    box.innerHTML=hello+list.map(h=>`<article class="ph-fav-item">
       <a href="casa.html?id=${encodeURIComponent(h.id)}"><img src="${esc(h.img[0])}" alt="Fachada da casa no ${esc(h.cond)}"></a>
       <div><a href="casa.html?id=${encodeURIComponent(h.id)}"><strong>Casa no ${esc(h.cond)}</strong></a>
       <small>${esc(houseCity(h))} · ${esc(houseBrief(h))}</small>
@@ -484,7 +643,7 @@ Pode me confirmar um horário?`;
       <div class="detail-top"><div><div class="eyebrow">${esc(c.cidade)}${c.bairro&&c.bairro!=='Centro'?' · '+esc(c.bairro):''}</div><h1 style="font-size:clamp(34px,4vw,56px)">Casa no ${esc(c.cond)}</h1></div>
       <div class="detail-top-side"><div class="price">${brl(c.valor)}</div>
       <div class="detail-acts">
-        <button type="button" class="card-act card-fav" data-fav="${esc(c.id)}" aria-label="Salvar nos favoritos" aria-pressed="false" title="Salvar nos favoritos">${I.heart||''}<span>Favoritar</span></button>
+        <button type="button" class="card-act card-fav" data-fav="${esc(c.id)}" aria-label="Salvar nos favoritos" aria-pressed="false" title="Salvar nos favoritos">${I.heart||''}<span class="ph-fav-label">Favoritar</span></button>
         <button type="button" class="card-act card-cmp" data-cmp="${esc(c.id)}" aria-label="Comparar esta casa" aria-pressed="false" title="Comparar">${I.cmp||''}<span>Comparar</span></button>
       </div></div></div>
       <img class="detail-photo" id="ph" src="${esc(c.img[0])}" alt="Casa no ${esc(c.cond)}, foto 1">
@@ -502,7 +661,7 @@ Pode me confirmar um horário?`;
         <h3>Vamos conhecer esta casa?</h3>
         <p>Fale com o corretor e combine sua visita.</p>
         <a class="btn" href="${wa(msg)}" target="_blank" rel="noreferrer">${I.msg||''} Pergunte ao corretor sobre essa casa</a>
-        <a class="btn secondary" href="${wa(msg2)}" target="_blank" rel="noreferrer">${I.heart||''} Tenho interesse nesta casa</a>
+        <button type="button" class="btn secondary ph-interest" data-fav="${esc(c.id)}" aria-pressed="false" aria-label="Tenho interesse nesta casa">${I.heart||''}<span class="ph-fav-label">Tenho interesse nesta casa</span></button>
         ${visitHTML(c)}
         <p style="font-size:13px">CRECI 9493 · Exija o CRECI</p>
       </aside></div>
@@ -584,10 +743,17 @@ ${n?`<section class="section"><div class="section-head"><div><div class="eyebrow
   document.addEventListener('click',e=>{
     const rm=e.target.closest&&e.target.closest('[data-cmp-rm]');
     if(rm){e.preventDefault();toggleCmp(rm.getAttribute('data-cmp-rm'));return}
+    const edit=e.target.closest&&e.target.closest('[data-edit-lead]');
+    if(edit){e.preventDefault();e.stopPropagation();if(window.PH&&PH.openReg)PH.openReg({mode:'editar'});return}
     const frm=e.target.closest&&e.target.closest('[data-fav-rm]');
-    if(frm){e.preventDefault();toggleFav(frm.getAttribute('data-fav-rm'));return}
+    if(frm){e.preventDefault();toggleFav(frm.getAttribute('data-fav-rm'),{force:true});return}
     const fav=e.target.closest&&e.target.closest('[data-fav]');
-    if(fav){e.preventDefault();e.stopPropagation();toggleFav(fav.getAttribute('data-fav'));return}
+    if(fav){
+      e.preventDefault();e.stopPropagation();
+      const onCasa=fav.classList.contains('ph-interest')||!!document.querySelector('.contact-box .ph-interest')||/\/casa(\.html|\/)/.test(location.pathname);
+      toggleFav(fav.getAttribute('data-fav'),{source:onCasa?'casa':'vitrine'});
+      return
+    }
     const cmp=e.target.closest&&e.target.closest('[data-cmp]');
     if(cmp){e.preventDefault();e.stopPropagation();toggleCmp(cmp.getAttribute('data-cmp'));return}
   },true);
@@ -613,9 +779,18 @@ ${n?`<section class="section"><div class="section-head"><div><div class="eyebrow
   const startMo=()=>{if(document.body)mo.observe(document.body,{childList:true,subtree:true})};
   document.addEventListener('DOMContentLoaded',()=>{syncButtons();startMo()});
 
+  const onLeadSaved=({wasNew,savedHouse,mode}={})=>{
+    if(savedHouse&&wasNew)toast('Cadastro concluído! Casa salva nos seus favoritos.');
+    else if(mode==='editar')toast('Dados atualizados.');
+    else toast('Cadastro concluído!');
+    syncButtons();
+    if($('ph-favs')&&$('ph-favs').classList.contains('on'))renderFavs();
+    if(wasNew)sendLeadActivity('cadastro',savedHouse?byId(savedHouse):null);
+  };
+
   window.PH=Object.assign(PH,{
     casaAbs,condoAbs,houseBrief,houseLineTxt,houseHighlights,terrenoOf,
     mountCasaPage,mountCondoPage,applySeo,toggleFav,toggleCmp,openCompare,openFavs,
-    SITE
+    toast,onLeadSaved,computeInferredProfile,sendLeadActivity,buildLeadPayload,LEAD_WEBHOOK_URL,SITE
   });
 })();

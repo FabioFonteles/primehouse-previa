@@ -256,15 +256,15 @@ button:disabled{opacity:.6;cursor:wait}
 .detail-layout h3{margin-top:30px}
 .contact-box p{color:#c2c9bf;margin:14px 0}
 .footer-inner a:hover{color:var(--gold)}
-.reg-overlay{position:fixed;inset:0;z-index:70;background:#00000080;display:none;align-items:center;justify-content:center;padding:16px;animation:.2s ease-out fadein}
+.reg-overlay{position:fixed;inset:0;z-index:80;background:#00000080;display:none;align-items:center;justify-content:center;padding:16px;animation:.2s ease-out fadein}
 .reg-overlay.on{display:flex}
-.reg-modal{position:relative;background:#141a19;border:1px solid #ffffff30;border-radius:8px;width:min(512px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:30px 25px;display:grid;grid-template-columns:1fr;gap:20px 28px;animation:.25s ease-out rise;box-shadow:0 20px 60px #0008}
-@media (min-width:640px){.reg-modal{grid-template-columns:1fr 1fr}}
-.reg-modal h2{font-size:30px;line-height:1.2;margin-bottom:22px}
-.reg-modal .side{color:#c2c5bf;font-size:14px;line-height:1.5;padding-right:14px}
-.reg-modal form{display:grid;gap:14px;font-size:14px}
-.reg-modal label{font-size:14px;margin-bottom:-8px}
-.reg-modal input{padding:12px 14px;font-size:14px;border-radius:4px}
+.reg-modal{position:relative;background:#141a19;border:1px solid #ffffff30;border-radius:8px;width:min(440px,100%);max-width:440px;max-height:calc(100vh - 32px);overflow:auto;padding:32px 28px 28px;display:flex;flex-direction:column;animation:.25s ease-out rise;box-shadow:0 20px 60px #0008}
+.reg-modal h2{font-size:28px;line-height:1.22;margin:0 24px 10px 0}
+.reg-modal .side{color:#c2c5bf;font-size:14px;line-height:1.5;padding:0;margin:0 0 22px}
+.reg-modal form{display:grid;gap:8px;font-size:14px;width:100%}
+.reg-modal label{font-size:14px;margin:8px 0 0}
+.reg-modal label:first-of-type{margin-top:0}
+.reg-modal input{width:100%;box-sizing:border-box;padding:12px 14px;font-size:14px;border-radius:4px}
 .reg-modal input:focus{outline:2px solid #fff;outline-offset:0}
 .reg-modal .checkrow{font-size:13px;color:#c2c5bf}
 .reg-modal .checkrow input{width:15px;margin-top:4px}
@@ -591,3 +591,24 @@ body.ph-lock{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   .ph-overlay,.ph-toast,.card-act{transition:none}
 }
+
+/* cadastro leve + CTA de favoritos na página da casa */
+.reg-modal .optional{color:#aaafa9;font-weight:400;font-size:12px}
+.reg-modal #reg-skip[hidden]{display:none!important}
+.contact-box .btn.ph-interest{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;text-align:center}
+.contact-box .btn.ph-interest svg{flex-shrink:0}
+.contact-box .btn.ph-interest.is-on,
+.contact-box .btn.ph-interest[aria-pressed="true"]{
+  background:var(--gold);
+  border-color:var(--gold);
+  color:#1a201c;
+}
+.contact-box .btn.ph-interest.is-on svg,
+.contact-box .btn.ph-interest[aria-pressed="true"] svg{fill:currentColor;stroke:currentColor}
+.ph-fav-hello{font-size:14px;color:#c2c5bf;margin:0 0 16px}
+.ph-fav-hello .ph-edit-lead{
+  appearance:none;background:none;border:0;padding:0;margin:0;cursor:pointer;
+  color:var(--gold);font:inherit;font-size:13px;text-decoration:none;
+  border-bottom:1px solid transparent;
+}
+.ph-fav-hello .ph-edit-lead:hover{border-bottom-color:var(--gold)}
