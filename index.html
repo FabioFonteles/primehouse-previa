@@ -11,8 +11,8 @@
 <div class="range-slider" id="f-range" role="group" aria-labelledby="f-invest-caption">
 <div class="range-track" aria-hidden="true"></div>
 <div class="range-fill" id="f-range-fill" aria-hidden="true"></div>
-<button type="button" class="range-thumb" id="f-min" role="slider" aria-label="Investimento mínimo" aria-valuemin="690000" aria-valuemax="9200000" aria-valuenow="690000" aria-valuetext="R$ 690 mil"></button>
-<button type="button" class="range-thumb" id="f-max" role="slider" aria-label="Investimento máximo" aria-valuemin="690000" aria-valuemax="9200000" aria-valuenow="9200000" aria-valuetext="R$ 9,2 mi"></button>
+<button type="button" class="range-thumb" id="f-min" role="slider" aria-label="Investimento mínimo" aria-valuemin="630000" aria-valuemax="12000000" aria-valuenow="630000" aria-valuetext="R$ 630 mil"></button>
+<button type="button" class="range-thumb" id="f-max" role="slider" aria-label="Investimento máximo" aria-valuemin="630000" aria-valuemax="12000000" aria-valuenow="12000000" aria-valuetext="R$ 12 mi"></button>
 </div>
 </div>
 <div><label for="f-ord">Ordenar</label><select class="picker" id="f-ord" aria-label="Ordenar imóveis"><option value="asc">Menor preço</option><option value="desc">Maior preço</option></select></div>
@@ -53,6 +53,7 @@ const fromPct=p=>{const a=Math.log(RANGE.min),b=Math.log(RANGE.max);return snap(
 const paintRange=()=>{
   const minEl=$('f-min'),maxEl=$('f-max'),fill=$('f-range-fill'),lab=$('f-invest-label');
   const p0=toPct(vmin)*100,p1=toPct(vmax)*100;
+  [minEl,maxEl].forEach(el=>{if(el){el.setAttribute('aria-valuemin',String(RANGE.min));el.setAttribute('aria-valuemax',String(RANGE.max))}});
   if(minEl){minEl.style.left=p0+'%';minEl.setAttribute('aria-valuenow',String(vmin));minEl.setAttribute('aria-valuetext',curtoFaixa(vmin))}
   if(maxEl){maxEl.style.left=p1+'%';maxEl.setAttribute('aria-valuenow',String(vmax));maxEl.setAttribute('aria-valuetext',curtoFaixa(vmax))}
   if(fill){fill.style.left=p0+'%';fill.style.width=Math.max(0,p1-p0)+'%'}
