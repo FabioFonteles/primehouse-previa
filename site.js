@@ -15,7 +15,7 @@ const I={
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const brl=v=>'R$ '+Number(v).toLocaleString('pt-BR',{maximumFractionDigits:0});
 const m2=a=>String(a).replace('.',',');
-const suites=c=>`${c.s} suíte${c.s>1?'s':''}`;const vagas=c=>`${c.vagas} vaga${c.vagas>1?'s':''}`;
+const suites=c=>`${c.s} suíte${c.s>1?'s':''}`;const vagas=c=>c.vagas?`${c.vagas} vaga${c.vagas>1?'s':''}`:'';
 const logo=(extra='')=>`<a class="brand brand-image ${extra}" href="index.html" aria-label="Prime House — página inicial"><img src="img/logo-prime-house-letreiro.png" alt="Prime House" width="1202" height="121"></a>`;
 
 // ---------- cabeçalho, rodapé, WhatsApp flutuante ----------
@@ -479,7 +479,7 @@ const houseHasItem=(h,key)=>{
   }
   return false;
 };
-const INVEST={min:690000,max:9200000,step:5000};
+const INVEST=(()=>{const vals=(typeof CASAS!=="undefined"?CASAS:[]).map(c=>+c.valor).filter(v=>v>0);if(!vals.length)return{min:690000,max:9200000,step:5000};return{min:Math.min(...vals),max:Math.max(...vals),step:5000};})();
 const curtoFaixa=v=>{
   v=Math.round(+v||0);
   if(v>=1e6){
