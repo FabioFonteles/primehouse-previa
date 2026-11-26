@@ -18,10 +18,12 @@ const suites=c=>`${c.s} suíte${c.s>1?'s':''}`;const vagas=c=>`${c.vagas} vaga${
 const logo=(extra='')=>`<a class="brand brand-image ${extra}" href="index.html" aria-label="Prime House — página inicial"><img src="img/logo-prime-house-letreiro.png" alt="Prime House" width="1202" height="121"></a>`;
 
 // ---------- cabeçalho, rodapé, WhatsApp flutuante ----------
-const header=`<header class="site-header"><div class="wrap header-inner"><div class="header-brand-row">${logo()}<button class="nav-toggle" type="button" aria-label="Abrir menu" aria-controls="site-nav" aria-expanded="false"><span></span><span></span><span></span></button></div><div class="header-rule" aria-hidden="true"></div><nav id="site-nav" class="site-nav"><a href="index.html#casas">Encontre sua casa</a><a href="condominios.html">Conheça os condomínios</a><a href="index.html#busca">Busca personalizada</a><a class="nav-cta" href="${wa('Olá, procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">Fale com o corretor</a></nav></div></header>`;
+const header=`<header class="site-header"><div class="wrap header-inner"><div class="header-brand-row">${logo()}<button class="nav-toggle" type="button" aria-label="Abrir menu" aria-controls="site-nav" aria-expanded="false"><span></span><span></span><span></span></button></div><div class="header-rule" aria-hidden="true"></div><nav id="site-nav" class="site-nav"><a href="index.html#casas">Encontre sua casa</a><a href="index.html#mapa">Mapa</a><a href="condominios.html">Conheça os condomínios</a><a href="index.html#busca">Busca personalizada</a><a class="nav-cta" href="${wa('Olá, procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">Fale com o corretor</a></nav></div></header>`;
 const footer=`<footer class="footer"><div class="wrap footer-inner">${logo('footer-brand')}<div class="footer-meta"><div>Fale com o corretor · CRECI 9493<br>WhatsApp <a href="${wa('Olá! Procuro uma casa em condomínio fechado.')}" target="_blank" rel="noreferrer">(91) 98010-1026</a><br>Exija o CRECI</div><div>Belém · Ananindeua · Marituba<br><a href="privacidade.html">Privacidade</a> · <button type="button" data-cadastro class="footer-cadastro">Meu cadastro</button></div></div></div></footer><a class="floating-whatsapp" href="${wa('Olá! Procuro uma casa em condomínio fechado.')}" target="_blank" rel="noopener noreferrer" aria-label="Fale com o corretor pelo WhatsApp" title="Fale com o corretor no WhatsApp">${I.waLogo}</a>`;
 document.body.insertAdjacentHTML('afterbegin',header);
 (function(){
+ const path0=(location.pathname.split('/').pop()||'index.html');
+ if(path0===''||path0==='index.html') document.body.classList.add('page-home');
  const hdr=document.querySelector('.site-header');
  const tog=document.querySelector('.nav-toggle');
  const nav=document.getElementById('site-nav');
@@ -53,6 +55,7 @@ document.body.insertAdjacentHTML('afterbegin',header);
    else if(path==='casa.html') on=href.indexOf('#casas')!==-1;
    else if(path==='index.html'||path===''){
     if(hash==='#busca') on=href.indexOf('#busca')!==-1;
+    else if(hash==='#mapa') on=href.indexOf('#mapa')!==-1;
     else on=href.indexOf('#casas')!==-1;
    }
    if(on)a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
@@ -80,7 +83,7 @@ document.getElementById('reg-f').addEventListener('submit',e=>{e.preventDefault(
  let t=`Olá! Meu nome é ${n}.${w?` Meu WhatsApp: ${w}.`:''} Quero ajuda para encontrar uma casa em condomínio fechado.`;
  if(c)t+=' Quero receber novidades sobre imóveis pelo WhatsApp.';
  window.open(wa(t),'_blank','noopener');ss('ph-balao','0');bub.hidden=true;closeReg();bub.hidden=true});
-if(!ss('ph-convite')&&!document.body.dataset.noinvite)setTimeout(openReg,900);else if(ss('ph-balao')!=='0')bub.hidden=false;
+if(!document.body.dataset.noinvite&&ss('ph-balao')!=='0')setTimeout(()=>{if(!reg.classList.contains('on'))bub.hidden=false},900);
 
 };
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready);else ready();
@@ -97,5 +100,76 @@ const houseLine=h=>{const d=String(h.nome||'').split(' · ').slice(1).join(' · 
 const condoHTML=(c,full)=>{const n=c._houses.length,cn=n?c._houses[0].cond:c.nome,lim=full?n:4;const title=c.id?`<a href="condominio.html?id=${c.id}">${esc(c.nome)}</a>`:esc(c.nome);
  const list=n?`<div class="condo-houses-t">Casas disponíveis aqui · ${n}</div><ul class="condo-houses">${c._houses.slice(0,lim).map(houseLine).join('')}</ul>${n>lim?`<a class="text-link" href="condominio.html?id=${c.id}">Ver as ${n} casas</a>`:''}`:`<p>Sem casas no nosso catálogo no momento.</p><a class="btn secondary" href="${wa(`Olá! Quero uma casa no condomínio ${c.nome}.`)}" target="_blank" rel="noreferrer">Quero uma casa aqui</a>`;
  return `<article class="condo"><div class="location">${esc(c.cidade)}${c.bairro?' · '+esc(c.bairro):''}</div><h3>${title}</h3><p>${esc(c.resumo||'Registre seu interesse para receber atendimento e buscar uma casa neste condomínio.')}</p>${list}<div class="condo-links">${c.maps?`<a class="text-link" href="${c.maps}" target="_blank" rel="noreferrer">Ver no Google Maps</a>`:''}${c.id?`<a class="text-link" href="condominio.html?id=${c.id}">Conhecer o condomínio</a>`:''}</div>${c.resumo?'<p style="font-size:12px">Informações do material dos imóveis.</p>':''}</article>`};
-window.PH={houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,condoHTML,condList,houses};
+// ---------- mapa (Leaflet, no estilo do HomeTrack, paleta Prime House) ----------
+const curtoPreco=v=>{
+  if(v>=1e6){const n=v/1e6;let s;if(n>=10)s=String(Math.round(n));
+    else if(Math.abs(n-Math.round(n*10)/10)<0.02)s=(Math.round(n*10)/10).toFixed(1).replace('.',',').replace(/,0$/,'');
+    else s=(Math.round(n*100)/100).toFixed(2).replace('.',',').replace(/0$/,'');
+    return 'R$ '+s+' mi';}
+  return 'R$ '+Math.round(v/1e3)+' mil';
+};
+const houseDetalhe=h=>{const d=String(h.nome||'').split(' · ').slice(1).join(' · ');return d||`casa de ${h.q} quartos`;};
+const condoOf=h=>(typeof CONDS!=='undefined'?CONDS:[]).find(c=>(c.casas||[]).includes(h&&h.cond))||null;
+const coordsOf=t=>{
+  if(!t)return null;
+  if(typeof t.lat==='number'&&typeof t.lng==='number')return t;
+  const c=t.cond?condoOf(t):null;
+  return (c&&typeof c.lat==='number'&&typeof c.lng==='number')?c:null;
+};
+const leafletTiles=m=>L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles &copy; Esri'}).addTo(m);
+const pinIcon=(label,n)=>L.divIcon({className:'map-pin-wrap',html:`<div class="map-pin">${n>1?`<span class="map-pin-n">${n}</span>`:''}<span>${esc(label)}</span></div>`,iconSize:[0,0],iconAnchor:[0,0]});
+const popupNota=c=>c&&c.coordPrecisao==='via'?'Localização aproximada (avenida do condomínio).':c&&c.coordPrecisao==='complexo'?'Localização aproximada do complexo.':c&&c.coordPrecisao==='bairro'?'Localização aproximada (bairro do condomínio).':'Localização aproximada do condomínio.';
+const popupHTML=(c,hs)=>{
+  const loc=`${esc(hs[0].cidade)}${hs[0].bairro&&hs[0].bairro!=='Centro'?' · '+esc(hs[0].bairro):''}`;
+  const nota=popupNota(c);
+  if(hs.length===1){const h=hs[0];
+    return `<div class="map-card"><strong>${esc(h.cond)}</strong><span class="map-card-det">${esc(houseDetalhe(h))}</span><span class="map-card-loc">${loc}</span><span class="map-card-preco">${brl(h.valor)}</span><a href="casa.html?id=${encodeURIComponent(h.id)}">Ver a casa →</a><small>${nota}</small></div>`;}
+  const lis=hs.map(h=>`<li><a href="casa.html?id=${encodeURIComponent(h.id)}"><span>${esc(houseDetalhe(h))}</span><strong>${brl(h.valor)}</strong></a></li>`).join('');
+  return `<div class="map-card"><strong>${esc(hs[0].cond)}</strong><span class="map-card-loc">${loc}</span><span class="map-card-det">${hs.length} casas neste condomínio</span><ul class="map-card-list">${lis}</ul><small>${nota}</small></div>`;
+};
+let _vitrineMap,_vitrineLayer;
+const initVitrineMap=()=>{
+  if(_vitrineMap||typeof L==='undefined')return _vitrineMap;
+  const el=document.getElementById('mapa-canvas');if(!el)return null;
+  _vitrineMap=L.map('mapa-canvas',{scrollWheelZoom:false}).setView([-1.36,-48.43],11);
+  leafletTiles(_vitrineMap);_vitrineLayer=L.layerGroup().addTo(_vitrineMap);
+  const fix=()=>_vitrineMap&&_vitrineMap.invalidateSize();
+  setTimeout(fix,200);window.addEventListener('resize',fix);
+  if('IntersectionObserver'in window)new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting))fix()},{threshold:.1}).observe(el);
+  return _vitrineMap;
+};
+const pintaMapa=houses=>{
+  if(!initVitrineMap()||!_vitrineLayer)return;
+  _vitrineLayer.clearLayers();
+  const groups=new Map();
+  (houses||[]).forEach(h=>{const c=coordsOf(h);if(!c)return;const k=c.id||(c.lat+','+c.lng);const g=groups.get(k)||{coords:c,houses:[]};g.houses.push(h);groups.set(k,g)});
+  const pts=[];
+  groups.forEach(g=>{
+    const hs=g.houses.slice().sort((a,b)=>a.valor-b.valor);
+    const label=hs.length===1?curtoPreco(hs[0].valor):(hs.length+' casas');
+    L.marker([g.coords.lat,g.coords.lng],{icon:pinIcon(label,0),alt:`${hs[0].cond}, ${label}`,riseOnHover:true})
+      .addTo(_vitrineLayer)
+      .bindPopup(popupHTML(g.coords,hs),{maxWidth:340,className:'map-pop'});
+    pts.push([g.coords.lat,g.coords.lng]);
+  });
+  if(pts.length===1) _vitrineMap.setView(pts[0],14);
+  else if(pts.length){
+    const lats=pts.map(p=>p[0]).sort((a,b)=>a-b), lngs=pts.map(p=>p[1]).sort((a,b)=>a-b);
+    const mid=lats[Math.floor(lats.length/2)];
+    const core=pts.filter(p=>Math.abs(p[0]-mid)<0.08);
+    const use=core.length>=Math.max(2,pts.length-1)?core:pts;
+    _vitrineMap.fitBounds(use,{padding:[36,36],maxZoom:13});
+  }else _vitrineMap.setView([-1.36,-48.43],12);
+  setTimeout(()=>_vitrineMap.invalidateSize(),180);
+};
+const mountMiniMap=(elId,target)=>{
+  const el=document.getElementById(elId),c=coordsOf(target);
+  if(!el||!c||typeof L==='undefined'){if(el&&el.parentElement)el.parentElement.hidden=true;return null;}
+  const m=L.map(elId,{scrollWheelZoom:false}).setView([c.lat,c.lng],14);
+  leafletTiles(m);
+  L.circle([c.lat,c.lng],{radius:c.coordPrecisao==='via'||c.coordPrecisao==='complexo'||c.coordPrecisao==='bairro'?400:320,color:'#cfb681',weight:2,fillColor:'#cfb681',fillOpacity:.22}).addTo(m);
+  setTimeout(()=>m.invalidateSize(),200);
+  return m;
+};
+window.PH={houseLine,vagas,wa,I,esc,brl,m2,suites,cardHTML,condoHTML,condList,houses,coordsOf,pintaMapa,initVitrineMap,mountMiniMap,curtoPreco};
 })();
