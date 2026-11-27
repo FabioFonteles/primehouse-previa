@@ -20,10 +20,6 @@
   let openLayer,openBg,openLogo,openCap,openLine,openDesc,flyFrom=null,flyTo=null,handed=false;
   let flying=false,flyT0=null,readyToEnter=false,pendingEnter=false;
   let swipeY=null,swipeX=null,boundEnter=false;
-  const SOUND_SRC='assets/intro-sound.mp3';
-  const SOUND_VOL=0.95;
-  let introAudio=null,introAudioPlayed=false,introAudioPlayStarted=false,introSoundAutoTried=false,soundUnlockBound=false;
-
   /* Abertura no ritmo de trailer: respiro no preto, logo lenta, filete, texto; o voo só começa após a interação. */
   const T_LOGO=350, T_LOGO_END=2750, T_LINE=3300, T_LINE_END=4200, T_DESC=3500, T_DESC_END=4900;
   const T_FLY_DUR=1250, T_CAP_FADE=420, T_BG_DELAY=200;
@@ -33,67 +29,6 @@
   const isMobile=()=>mobileMq.matches;
   const isMobileIntro=()=>coarseMq.matches||mobileMq.matches;
   const restScale=()=>isMobile()?1.14:1.18;
-  const introSoundEl=()=>{
-    if(introAudio)return introAudio;
-    let el=document.getElementById('ph-intro-sound');
-    if(!el){
-      el=document.createElement('audio');
-      el.id='ph-intro-sound';
-      el.preload='auto';
-      el.setAttribute('playsinline','');
-      el.setAttribute('webkit-playsinline','');
-      el.setAttribute('aria-hidden','true');
-      el.src=SOUND_SRC;
-      el.style.cssText='position:absolute;width:0;height:0;opacity:0;pointer-events:none';
-      (document.body||document.documentElement).appendChild(el);
-    }
-    try{el.volume=SOUND_VOL}catch(e){}
-    introAudio=el;
-    return el;
-  };
-  /* Tenta tocar junto com o fade-in do logo Prime House (T_LOGO).
-     Se o navegador permitir autoplay, o som entra sozinho com o nome.
-     Se bloquear (NotAllowedError), o primeiro pointerdown/touchstart/
-     touchend/click/keydown dispara .play() na hora — uma vez só por
-     abertura. Falha é engolida, sem console.error. */
-  const armSoundUnlock=()=>{
-    if(introAudioPlayed||introAudioPlayStarted||soundUnlockBound)return;
-    soundUnlockBound=true;
-    const once={capture:true,once:true};
-    const kick=()=>{playIntroSound()};
-    window.addEventListener('pointerdown',kick,once);
-    window.addEventListener('touchstart',kick,once);
-    window.addEventListener('touchend',kick,once);
-    window.addEventListener('click',kick,once);
-    window.addEventListener('keydown',kick,once);
-  };
-  const playIntroSound=()=>{
-    if(introAudioPlayed||introAudioPlayStarted)return;
-    const el=introSoundEl();
-    if(!el)return;
-    if(!el.paused&&el.currentTime>0){introAudioPlayed=true;return}
-    try{el.muted=false}catch(e){}
-    try{el.volume=SOUND_VOL}catch(e){}
-    introAudioPlayStarted=true;
-    try{
-      const p=el.play();
-      if(p&&typeof p.then==='function'){
-        p.then(()=>{introAudioPlayed=true}).catch(()=>{
-          introAudioPlayStarted=false;
-          armSoundUnlock();
-        });
-      }else{
-        introAudioPlayed=true;
-      }
-    }catch(e){
-      introAudioPlayStarted=false;
-      armSoundUnlock();
-    }
-  };
-  const stopIntroSound=()=>{
-    if(!introAudio)return;
-    try{introAudio.pause()}catch(e){}
-  };
 
   const easeOut=(function(x1,y1,x2,y2){
     const cx=3*x1,bx=3*(x2-x1)-cx,ax=1-cx-bx;
@@ -211,14 +146,9 @@
     startFly();
   };
 
-  const onPointerDown=(e)=>{
-    if(e&&e.button!=null&&e.button!==0)return;
-    playIntroSound();
-  };
   const onClick=(e)=>{
     if(isMobileIntro())return;
     if(e&&e.button!=null&&e.button!==0)return;
-    playIntroSound();
     requestEnter();
   };
   const onKeyDown=(e)=>{
@@ -228,13 +158,11 @@
     if(e.key==='Tab'||e.key==='Shift'||e.key==='Control'||e.key==='Meta'||e.key==='Alt')return;
     if(/^F\d{1,2}$/.test(e.key))return;
     e.preventDefault();
-    playIntroSound();
     requestEnter();
   };
   const onWheel=(e)=>{
     if(isMobileIntro())return;
     if(e)e.preventDefault();
-    playIntroSound();
     requestEnter();
   };
   let swipeArmed=false;
@@ -243,7 +171,6 @@
     swipeY=e.touches[0].clientY;
     swipeX=e.touches[0].clientX;
     swipeArmed=false;
-    playIntroSound();
   };
   const onTouchMove=(e)=>{
     if(!isMobileIntro()||swipeY==null||!e.touches||!e.touches.length)return;
@@ -271,7 +198,6 @@
     }
     swipeY=null;swipeX=null;swipeArmed=false;
     if(!ok)return;
-    playIntroSound();
     requestEnter();
   };
 
@@ -281,7 +207,6 @@
     const opts={capture:true};
     const wheelOpts={capture:true,passive:false};
     const touchOpts={capture:true,passive:false};
-    window.addEventListener('pointerdown',onPointerDown,opts);
     window.addEventListener('click',onClick,opts);
     window.addEventListener('keydown',onKeyDown,opts);
     window.addEventListener('wheel',onWheel,wheelOpts);
@@ -293,7 +218,6 @@
   const unbindEnter=()=>{
     if(!boundEnter)return;
     boundEnter=false;
-    window.removeEventListener('pointerdown',onPointerDown,true);
     window.removeEventListener('click',onClick,true);
     window.removeEventListener('keydown',onKeyDown,true);
     window.removeEventListener('wheel',onWheel,true);
@@ -310,10 +234,6 @@
 
     if(!flying){
       const ms=now-introT0;
-      if(!introSoundAutoTried&&ms>=T_LOGO){
-        introSoundAutoTried=true;
-        playIntroSound();
-      }
       const p=ms<T_LOGO?0:easeCine(clamp((ms-T_LOGO)/(T_LOGO_END-T_LOGO),0,1));
       openLogo.style.opacity=String(p);
       openLogo.style.transformOrigin='50% 50%';
@@ -411,11 +331,9 @@
   const beginIntro=()=>{
     introActive=true;introT0=null;flyFrom=null;flyTo=null;handed=false;
     flying=false;flyT0=null;readyToEnter=false;pendingEnter=false;
-    introAudioPlayed=false;introAudioPlayStarted=false;introSoundAutoTried=false;soundUnlockBound=false;
     root.classList.add('ph-px-intro');
     mountOpen();
     bindEnter();
-    try{introSoundEl()}catch(e){}
     const kick=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
       introT0=performance.now();
       placeCenter();
@@ -483,7 +401,6 @@
   const clearMotion=()=>{
     introActive=false;introT0=null;handed=true;flying=false;
     unbindEnter();
-    stopIntroSound();
     if(openLayer&&openLayer.parentNode)openLayer.parentNode.removeChild(openLayer);
     openLayer=openBg=openLogo=openCap=openLine=openDesc=null;
     root.classList.remove('ph-px-ready','ph-px-intro','ph-px-intro-in','ph-px-open-on');
