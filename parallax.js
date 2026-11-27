@@ -21,8 +21,8 @@
   let flying=false,flyT0=null,readyToEnter=false,pendingEnter=false;
   let swipeY=null,swipeX=null,boundEnter=false;
   const SOUND_SRC='assets/intro-sound.mp3';
-  const SOUND_VOL=0.60;
-  let introAudio=null,introAudioArmed=false,introAudioPlayed=false;
+  const SOUND_VOL=0.95;
+  let introAudio=null,introAudioPlayed=false,soundUnlockBound=false;
 
   /* Abertura no ritmo de trailer: respiro no preto, logo lenta, filete, texto; o voo só começa após a interação. */
   const T_LOGO=350, T_LOGO_END=2750, T_LINE=3300, T_LINE_END=4200, T_DESC=3500, T_DESC_END=4900;
@@ -51,31 +51,37 @@
     introAudio=el;
     return el;
   };
-  /* Desbloqueia no gesto do visitante; toca de verdade só quando o logo sobe.
-     Falha de autoplay (ex.: roda do mouse) é engolida — zero console.error. */
-  const armIntroSound=()=>{
-    const el=introSoundEl();
-    if(!el||introAudioArmed)return;
-    introAudioArmed=true;
-    let p;
-    try{p=el.play()}catch(e){introAudioArmed=false;return}
-    if(p&&typeof p.then==='function')p.then(()=>{
-      if(!introAudioPlayed){try{el.pause();el.currentTime=0}catch(e){}}
-    }).catch(()=>{introAudioArmed=false});
+  /* O som tem de começar no mesmo call stack do gesto com user activation
+     (click, touchend, keydown). play()+pause() e play() atrasado em rAF
+     são bloqueados no Chrome e no Safari — não usar. Falha (ex.: roda)
+     é engolida, sem console.error, e um listener único tenta de novo
+     no próximo click/touchend/keydown. */
+  const armSoundUnlock=()=>{
+    if(introAudioPlayed||soundUnlockBound)return;
+    soundUnlockBound=true;
+    const once={capture:true,once:true};
+    const kick=()=>{if(!introAudioPlayed)playIntroSound()};
+    window.addEventListener('click',kick,once);
+    window.addEventListener('pointerup',kick,once);
+    window.addEventListener('keydown',kick,once);
+    window.addEventListener('touchend',kick,once);
   };
   const playIntroSound=()=>{
     if(introAudioPlayed)return;
-    introAudioPlayed=true;
     const el=introSoundEl();
     if(!el)return;
+    try{el.muted=false}catch(e){}
     try{el.volume=SOUND_VOL}catch(e){}
     try{
       const p=el.play();
-      if(p&&typeof p.then==='function')p.catch(()=>{});
-    }catch(e){}
+      if(p&&typeof p.then==='function'){
+        p.then(()=>{introAudioPlayed=true}).catch(()=>{armSoundUnlock()});
+      }else{
+        introAudioPlayed=true;
+      }
+    }catch(e){armSoundUnlock()}
   };
   const stopIntroSound=()=>{
-    introAudioPlayed=true;
     if(!introAudio)return;
     try{introAudio.pause()}catch(e){}
   };
@@ -187,20 +193,19 @@
     flyFrom=placeCenter();
     const target=realLogo();
     if(target)flyTo=boxOf(target);
-    playIntroSound();
     requestTick();
   };
 
   const requestEnter=()=>{
     if(!introActive||handed||flying)return;
-    armIntroSound();
     if(!readyToEnter){pendingEnter=true;return}
     startFly();
   };
 
-  const onPointerDown=(e)=>{
+  const onClick=(e)=>{
     if(isMobileIntro())return;
     if(e&&e.button!=null&&e.button!==0)return;
+    playIntroSound();
     requestEnter();
   };
   const onKeyDown=(e)=>{
@@ -210,17 +215,21 @@
     if(e.key==='Tab'||e.key==='Shift'||e.key==='Control'||e.key==='Meta'||e.key==='Alt')return;
     if(/^F\d{1,2}$/.test(e.key))return;
     e.preventDefault();
+    playIntroSound();
     requestEnter();
   };
   const onWheel=(e)=>{
     if(isMobileIntro())return;
     if(e)e.preventDefault();
+    playIntroSound();
     requestEnter();
   };
+  let swipeArmed=false;
   const onTouchStart=(e)=>{
     if(!isMobileIntro()||!e.touches||!e.touches.length)return;
     swipeY=e.touches[0].clientY;
     swipeX=e.touches[0].clientX;
+    swipeArmed=false;
   };
   const onTouchMove=(e)=>{
     if(!isMobileIntro()||swipeY==null||!e.touches||!e.touches.length)return;
@@ -229,22 +238,27 @@
     const dy=swipeY-y;
     const dx=x-swipeX;
     if(dy>=SWIPE_UP&&dy>=Math.abs(dx)){
-      swipeY=null;swipeX=null;
+      swipeArmed=true;
       if(e.cancelable)e.preventDefault();
-      requestEnter();
     }
   };
   const onTouchEnd=(e)=>{
-    if(!isMobileIntro()||swipeY==null){swipeY=null;swipeX=null;return}
-    let y,x;
-    if(e.changedTouches&&e.changedTouches.length){
-      y=e.changedTouches[0].clientY;
-      x=e.changedTouches[0].clientX;
+    if(!isMobileIntro()){swipeY=null;swipeX=null;swipeArmed=false;return}
+    let ok=swipeArmed;
+    if(!ok&&swipeY!=null){
+      let y,x;
+      if(e.changedTouches&&e.changedTouches.length){
+        y=e.changedTouches[0].clientY;
+        x=e.changedTouches[0].clientX;
+      }
+      const dy=y!=null?swipeY-y:0;
+      const dx=x!=null?x-swipeX:0;
+      ok=dy>=SWIPE_UP&&dy>=Math.abs(dx);
     }
-    const dy=y!=null?swipeY-y:0;
-    const dx=x!=null?x-swipeX:0;
-    swipeY=null;swipeX=null;
-    if(dy>=SWIPE_UP&&dy>=Math.abs(dx))requestEnter();
+    swipeY=null;swipeX=null;swipeArmed=false;
+    if(!ok)return;
+    playIntroSound();
+    requestEnter();
   };
 
   const bindEnter=()=>{
@@ -253,7 +267,7 @@
     const opts={capture:true};
     const wheelOpts={capture:true,passive:false};
     const touchOpts={capture:true,passive:false};
-    window.addEventListener('pointerdown',onPointerDown,opts);
+    window.addEventListener('click',onClick,opts);
     window.addEventListener('keydown',onKeyDown,opts);
     window.addEventListener('wheel',onWheel,wheelOpts);
     window.addEventListener('touchstart',onTouchStart,touchOpts);
@@ -264,14 +278,14 @@
   const unbindEnter=()=>{
     if(!boundEnter)return;
     boundEnter=false;
-    window.removeEventListener('pointerdown',onPointerDown,true);
+    window.removeEventListener('click',onClick,true);
     window.removeEventListener('keydown',onKeyDown,true);
     window.removeEventListener('wheel',onWheel,true);
     window.removeEventListener('touchstart',onTouchStart,true);
     window.removeEventListener('touchmove',onTouchMove,true);
     window.removeEventListener('touchend',onTouchEnd,true);
     window.removeEventListener('touchcancel',onTouchEnd,true);
-    swipeY=null;swipeX=null;
+    swipeY=null;swipeX=null;swipeArmed=false;
   };
 
   const applyOpen=(now)=>{
