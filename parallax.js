@@ -6,7 +6,13 @@
   const mobileMq=window.matchMedia('(max-width:800px)');
   const coarseMq=window.matchMedia('(pointer: coarse)');
   const root=document.documentElement;
-  const INTRO_KEY='ph-px-intro';
+  /* A abertura e o som só rodam na página inicial, a cada visita/reload
+     (sem trava de sessionStorage). Páginas internas como casa.html não entram. */
+  const isHomePage=()=>{
+    const path=(location.pathname||'/').replace(/\/+$/,'')||'/';
+    const file=path.split('/').pop();
+    return file==='' || file==='index.html';
+  };
   const SWIPE_UP=40;
   const layers=[];
   let hero,photo,copy,ticking=false,io,mo;
@@ -27,8 +33,6 @@
   const isMobile=()=>mobileMq.matches;
   const isMobileIntro=()=>coarseMq.matches||mobileMq.matches;
   const restScale=()=>isMobile()?1.14:1.18;
-  const ss=(k,v)=>{try{return v===undefined?sessionStorage.getItem(k):sessionStorage.setItem(k,v)}catch(e){return null}};
-
   const introSoundEl=()=>{
     if(introAudio)return introAudio;
     let el=document.getElementById('ph-intro-sound');
@@ -374,7 +378,6 @@
     introActive=true;introT0=null;flyFrom=null;flyTo=null;handed=false;
     flying=false;flyT0=null;readyToEnter=false;pendingEnter=false;
     root.classList.add('ph-px-intro');
-    try{ss(INTRO_KEY,'1')}catch(e){}
     mountOpen();
     bindEnter();
     const kick=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
@@ -470,7 +473,7 @@
     collectLayers();
     if(reduceMq.matches){clearMotion();return}
     root.classList.remove('ph-px-reduced');
-    const playIntro=!!(hero&&!ss(INTRO_KEY));
+    const playIntro=!!(hero&&isHomePage());
     if(playIntro)beginIntro();
     else{
       root.classList.remove('ph-px-intro','ph-px-intro-in','ph-px-open-on');
